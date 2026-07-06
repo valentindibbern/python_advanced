@@ -46,6 +46,12 @@ Beispiele für Boni:
 - Vermeide komplexe Frameworks, Patterns oder Metaprogrammierung.
 - Keine externen Assets einbauen, wenn sie nicht wirklich gebraucht werden.
 - Keine Netzwerkzugriffe für das Spiel.
+- Behandle `main.py`, `src/`, `README.md`, `docs/`, `.gitignore` und diese
+  Datei als wichtige Orientierungspunkte für Struktur und Konventionen.
+- Prüfe vorhandene Dateien und Muster, bevor neue Strukturen eingeführt
+  werden.
+- Bearbeite keine generierten, temporären oder ignorierten Dateien, wenn sie
+  nicht ausdrücklich Teil der Aufgabe sind.
 
 ## Python-Version
 
@@ -178,6 +184,22 @@ Spielinhalte entstehen. Dort sollen NPCs, Szenen, Beschreibungen, Orte,
 Entscheidungen, Dialoge und wichtige Begriffe festgehalten werden, damit sie im
 Code, in der Dokumentation und im Spieltext überall übereinstimmen.
 
+## Dokumentationsregeln
+
+- Jede fachliche Änderung am Spiel soll in der passenden Dokumentation
+  nachvollziehbar sein.
+- Wenn sich Verhalten, Struktur, Startbefehle, Spielinhalte oder Konventionen
+  ändern, aktualisiere die vorhandene Dokumentation mit.
+- Neue Projektteile sollen kurz und praktisch beschrieben werden.
+- `README.md` bleibt der Einstiegspunkt für Menschen, die das Projekt starten
+  oder prüfen möchten.
+- Inhalte unter `docs/gamecontent/` sollen mit den Texten und Begriffen im Code
+  übereinstimmen.
+- Keine privaten Daten, Passwörter, Tokens oder unnötigen persönlichen Notizen
+  in Dokumentation oder Code schreiben.
+- Agentenhinweise sollen als klare Projektkonventionen formuliert sein, nicht
+  als private Gedankennotizen.
+
 ## Git-Hinweise
 
 - Keine generierten Dateien committen, wenn sie nicht gebraucht werden.
@@ -185,6 +207,26 @@ Code, in der Dokumentation und im Spieltext überall übereinstimmen.
 - Änderungen klein und nachvollziehbar halten.
 - Nach jeder erledigten Aufgabe soll ein Commit erstellt werden.
 - Die Commit-Beschreibung soll klar beschreiben, was implementiert wurde.
+- Vor Änderungen den Arbeitsstand prüfen und vorhandene fremde Änderungen nicht
+  ungefragt zurücksetzen.
+- Nur Dateien ändern, die für die aktuelle Aufgabe nötig sind.
+- Sinnvolle Zwischenstände committen, wenn eine größere Aufgabe klar trennbare
+  Teile hat.
+- Commit-Nachrichten sollen beschreiben, was sich konkret geändert hat.
+- Vor einem Commit prüfen, ob Dokumentation und Code zusammenpassen.
+
+## Arbeitsweise und Ausgabe
+
+- Arbeite zuerst aus dem vorhandenen Projekt heraus: lies relevante Dateien,
+  erkenne bestehende Muster und ändere dann gezielt.
+- Wähle bei mehreren Lösungen die einfachste Variante, die die Anforderung
+  sauber erfüllt.
+- Erkläre wichtige Annahmen kurz, besonders wenn eine Aufgabe mehrdeutig ist.
+- Melde am Ende knapp, welche Dateien geändert wurden und welche Prüfung
+  durchgeführt wurde.
+- Wenn eine sinnvolle Prüfung nicht möglich war, nenne den Grund klar.
+- Lange theoretische Erklärungen vermeiden; die Ausgabe soll praktisch und gut
+  nachvollziehbar sein.
 
 ## Wichtige Einschränkungen
 
