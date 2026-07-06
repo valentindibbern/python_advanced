@@ -1,0 +1,2 @@
+- verwende keine third-party dependencies
+- halte den code so einfach wie möglich
