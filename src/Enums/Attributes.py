@@ -10,6 +10,6 @@ class Attributes(Enum):
         labels = {
             Attributes.KNOWLEDGE: "Wissen",
             Attributes.WIT: "Schlagfertigkeit",
-            Attributes.UNDERSTANDING: "Verstaendnis",
+            Attributes.UNDERSTANDING: "Verständnis",
         }
         return labels[self]

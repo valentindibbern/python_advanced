@@ -266,7 +266,7 @@ class Ui:
                 "Attribute",
                 "Wissen: -",
                 "Schlagfertigkeit: -",
-                "Verstaendnis: -",
+                "Verständnis: -",
                 "",
                 "Ziel: -",
             ]
@@ -279,7 +279,7 @@ class Ui:
                 "Attribute",
                 f"Wissen: {character.get('knowledge', '-')}",
                 f"Schlagfertigkeit: {character.get('wit', '-')}",
-                f"Verstaendnis: {character.get('understanding', '-')}",
+                f"Verständnis: {character.get('understanding', '-')}",
                 "",
                 f"Ziel: {character.get('goal', '-')}",
             ]

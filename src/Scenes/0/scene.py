@@ -50,7 +50,7 @@ class CharacterCreationScene:
         text = text.strip()
 
         if self.step != CharacterCreationStep.NAME:
-            return self._response_for_current_step("Bitte waehle eine der angezeigten Optionen.")
+            return self._response_for_current_step("Bitte wähle eine der angezeigten Optionen.")
 
         if text == "":
             return self._make_response(
@@ -60,7 +60,7 @@ class CharacterCreationScene:
 
         self.name = text
         self.step = CharacterCreationStep.PLAYER_CLASS
-        return self._response_for_current_step("Waehle eine Klasse.")
+        return self._response_for_current_step("Wähle eine Klasse.")
 
     def handle_choice(self, choice_id: str) -> GameResponse:
         if self.step == CharacterCreationStep.PLAYER_CLASS:
@@ -72,7 +72,7 @@ class CharacterCreationScene:
         if self.step == CharacterCreationStep.ATTRIBUTES:
             return self._handle_attribute_choice(choice_id)
 
-        return self._response_for_current_step("Diese Auswahl ist hier nicht moeglich.")
+        return self._response_for_current_step("Diese Auswahl ist hier nicht möglich.")
 
     def is_done(self) -> bool:
         return self.step == CharacterCreationStep.DONE
@@ -83,27 +83,27 @@ class CharacterCreationScene:
     def _handle_class_choice(self, choice_id: str) -> GameResponse:
         prefix = "class:"
         if not choice_id.startswith(prefix):
-            return self._response_for_current_step("Bitte waehle eine gueltige Klasse.")
+            return self._response_for_current_step("Bitte wähle eine gültige Klasse.")
 
         class_name = choice_id.removeprefix(prefix)
         try:
             self.player_class = Class[class_name]
         except KeyError:
-            return self._response_for_current_step("Bitte waehle eine gueltige Klasse.")
+            return self._response_for_current_step("Bitte wähle eine gültige Klasse.")
 
         self.step = CharacterCreationStep.SPECIES
-        return self._response_for_current_step("Waehle eine Spezies.")
+        return self._response_for_current_step("Wähle eine Spezies.")
 
     def _handle_species_choice(self, choice_id: str) -> GameResponse:
         prefix = "species:"
         if not choice_id.startswith(prefix):
-            return self._response_for_current_step("Bitte waehle eine gueltige Spezies.")
+            return self._response_for_current_step("Bitte wähle eine gültige Spezies.")
 
         species_name = choice_id.removeprefix(prefix)
         try:
             self.species = Species[species_name]
         except KeyError:
-            return self._response_for_current_step("Bitte waehle eine gueltige Spezies.")
+            return self._response_for_current_step("Bitte wähle eine gültige Spezies.")
 
         self.step = CharacterCreationStep.ATTRIBUTES
         return self._response_for_current_step("Verteile deine 4 Attributpunkte.")
@@ -111,13 +111,13 @@ class CharacterCreationScene:
     def _handle_attribute_choice(self, choice_id: str) -> GameResponse:
         prefix = "attributes:"
         if not choice_id.startswith(prefix):
-            return self._response_for_current_step("Bitte waehle eine gueltige Attributverteilung.")
+            return self._response_for_current_step("Bitte wähle eine gültige Attributverteilung.")
 
         main_attribute_name = choice_id.removeprefix(prefix)
         try:
             main_attribute = Attributes[main_attribute_name]
         except KeyError:
-            return self._response_for_current_step("Bitte waehle eine gueltige Attributverteilung.")
+            return self._response_for_current_step("Bitte wähle eine gültige Attributverteilung.")
 
         self.attributes = self._get_starting_attributes(main_attribute)
         self.player = PC(
@@ -128,7 +128,7 @@ class CharacterCreationScene:
         )
         self.step = CharacterCreationStep.DONE
         return self._make_response(
-            "Charakter erstellt.\n\nDu bist bereit fuer die naechste Szene.",
+            "Charakter erstellt.\n\nDu bist bereit für die nächste Szene.",
             input_mode=InputMode.NONE,
             character=self._get_character_data(),
         )
