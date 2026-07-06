@@ -25,6 +25,7 @@ class BallroomArrivalScene:
         self.player = player
         self.story_flags = story_flags
         self.step = BallroomArrivalStep.ARRIVAL
+        self.selected_npc_ids: list[str] = []
 
     def start(self) -> GameResponse:
         self.step = BallroomArrivalStep.ARRIVAL
@@ -80,6 +81,7 @@ class BallroomArrivalScene:
             return self._response_for_current_step("Diese Auswahl ist hier nicht moeglich.")
 
         self.step = BallroomArrivalStep.NPC_OVERVIEW
+        self.selected_npc_ids = []
         return self._make_response(
             self._get_npc_overview_text(),
             input_mode=InputMode.CHOICE,
@@ -88,7 +90,95 @@ class BallroomArrivalScene:
         )
 
     def _handle_npc_choice(self, choice_id: str) -> GameResponse:
-        observations = {
+        observations = self._get_npc_observations()
+
+        if choice_id not in observations:
+            return self._response_for_current_step("Diese Person kannst du gerade nicht auswaehlen.")
+
+        if choice_id in self.selected_npc_ids:
+            return self._response_for_current_step("Diese Person hast du schon beobachtet.")
+
+        flag_value, text = observations[choice_id]
+        if "first_observed_npc" not in self.story_flags:
+            self.story_flags["first_observed_npc"] = flag_value
+
+        self.selected_npc_ids.append(choice_id)
+
+        if len(self.selected_npc_ids) == len(observations):
+            self.step = BallroomArrivalStep.FIRST_OBSERVATION
+            return self._make_response(
+                text + "\n\nDu hast alle wichtigen Personen im Ballsaal beobachtet.",
+                input_mode=InputMode.CHOICE,
+                choices=[
+                    {"id": "continue:end_scene", "label": "Dich unter die Gaeste mischen"},
+                ],
+                character=self._get_character_data(),
+            )
+
+        return self._make_response(
+            text,
+            input_mode=InputMode.CHOICE,
+            choices=self._get_npc_choices(),
+            character=self._get_character_data(),
+        )
+
+    def _handle_end_choice(self, choice_id: str) -> GameResponse:
+        if choice_id != "continue:end_scene":
+            return self._response_for_current_step("Diese Auswahl ist hier nicht moeglich.")
+
+        self.step = BallroomArrivalStep.DONE
+        return self._make_response(
+            "Du trittst tiefer in den Saal. Die Musik wird lauter, aber die "
+            "Gespraeche um die Hoehle sind ueberall zu hoeren. Der Abend hat gerade "
+            "erst begonnen.",
+            input_mode=InputMode.NONE,
+            character=self._get_character_data(),
+        )
+
+    def _response_for_current_step(self, text: str) -> GameResponse:
+        if self.step == BallroomArrivalStep.ARRIVAL:
+            return self._make_response(
+                text,
+                input_mode=InputMode.CHOICE,
+                choices=[
+                    {"id": "continue:look_around", "label": "Dich im Saal umsehen"},
+                ],
+                character=self._get_character_data(),
+            )
+
+        if self.step == BallroomArrivalStep.NPC_OVERVIEW:
+            return self._make_response(
+                text,
+                input_mode=InputMode.CHOICE,
+                choices=self._get_npc_choices(),
+                character=self._get_character_data(),
+            )
+
+        if self.step == BallroomArrivalStep.FIRST_OBSERVATION:
+            return self._make_response(
+                text,
+                input_mode=InputMode.CHOICE,
+                choices=[
+                    {"id": "continue:end_scene", "label": "Dich unter die Gaeste mischen"},
+                ],
+                character=self._get_character_data(),
+            )
+
+        return self._make_response(text, input_mode=InputMode.NONE, character=self._get_character_data())
+
+    def _get_npc_choices(self) -> list[Choice]:
+        choices = [
+            {"id": "npc:duchess", "label": "Herzogin Alena genauer beobachten"},
+            {"id": "npc:count", "label": "Graf Bastian genauer beobachten"},
+            {"id": "npc:guildmaster", "label": "Meisterin Runa genauer beobachten"},
+            {"id": "npc:envoy", "label": "Lord Caelion genauer beobachten"},
+            {"id": "npc:secretary", "label": "Hofsekretaer Marik genauer beobachten"},
+        ]
+
+        return [choice for choice in choices if choice["id"] not in self.selected_npc_ids]
+
+    def _get_npc_observations(self) -> dict[str, tuple[str, str]]:
+        return {
             "npc:duchess": (
                 "duchess",
                 "Du beobachtest Herzogin Alena genauer. Sie laechelt selten, aber jede "
@@ -140,74 +230,6 @@ class BallroomArrivalScene:
                 "ganzen Abend veraendern koennten.",
             ),
         }
-
-        if choice_id not in observations:
-            return self._response_for_current_step("Diese Person kannst du gerade nicht auswaehlen.")
-
-        flag_value, text = observations[choice_id]
-        self.story_flags["first_observed_npc"] = flag_value
-        self.step = BallroomArrivalStep.FIRST_OBSERVATION
-        return self._make_response(
-            text,
-            input_mode=InputMode.CHOICE,
-            choices=[
-                {"id": "continue:end_scene", "label": "Dich unter die Gaeste mischen"},
-            ],
-            character=self._get_character_data(),
-        )
-
-    def _handle_end_choice(self, choice_id: str) -> GameResponse:
-        if choice_id != "continue:end_scene":
-            return self._response_for_current_step("Diese Auswahl ist hier nicht moeglich.")
-
-        self.step = BallroomArrivalStep.DONE
-        return self._make_response(
-            "Du trittst tiefer in den Saal. Die Musik wird lauter, aber die "
-            "Gespraeche um die Hoehle sind ueberall zu hoeren. Der Abend hat gerade "
-            "erst begonnen.",
-            input_mode=InputMode.NONE,
-            character=self._get_character_data(),
-        )
-
-    def _response_for_current_step(self, text: str) -> GameResponse:
-        if self.step == BallroomArrivalStep.ARRIVAL:
-            return self._make_response(
-                text,
-                input_mode=InputMode.CHOICE,
-                choices=[
-                    {"id": "continue:look_around", "label": "Dich im Saal umsehen"},
-                ],
-                character=self._get_character_data(),
-            )
-
-        if self.step == BallroomArrivalStep.NPC_OVERVIEW:
-            return self._make_response(
-                text,
-                input_mode=InputMode.CHOICE,
-                choices=self._get_npc_choices(),
-                character=self._get_character_data(),
-            )
-
-        if self.step == BallroomArrivalStep.FIRST_OBSERVATION:
-            return self._make_response(
-                text,
-                input_mode=InputMode.CHOICE,
-                choices=[
-                    {"id": "continue:end_scene", "label": "Dich unter die Gaeste mischen"},
-                ],
-                character=self._get_character_data(),
-            )
-
-        return self._make_response(text, input_mode=InputMode.NONE, character=self._get_character_data())
-
-    def _get_npc_choices(self) -> list[Choice]:
-        return [
-            {"id": "npc:duchess", "label": "Herzogin Alena genauer beobachten"},
-            {"id": "npc:count", "label": "Graf Bastian genauer beobachten"},
-            {"id": "npc:guildmaster", "label": "Meisterin Runa genauer beobachten"},
-            {"id": "npc:envoy", "label": "Lord Caelion genauer beobachten"},
-            {"id": "npc:secretary", "label": "Hofsekretaer Marik genauer beobachten"},
-        ]
 
     def _get_npc_overview_text(self) -> str:
         return (
