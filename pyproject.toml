@@ -1,5 +1,14 @@
 [project]
 name = "python-advanced"
 version = "0.1.0"
+description = "Das Projekt zugehörig zur Aufgabe Python Advanced."
+authors = ["Valentin Dibbern"]
+repository = "https://github.com/valentindibbern/python_advanced.git"
+readme = "README.md"
+
+[requirements]
 requires-python = ">=3.14"
-dependencies = []
+
+[paths]
+source = "src"
+assets = "assets"
