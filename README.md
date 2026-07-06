@@ -1,15 +1,61 @@
-# Python Adcanced
-Das ist das Reposetory für die zweite python Aufgabe im Schnupperpraktikum bei der Rafisa.
-Die Aufgabe ist, mit hilfe von von Python un TKinter ein textbasiert Rollenspiel zu programmieren.
+# Python Advanced
 
-## Requirements und Installation
-### Requirements
-- Python: 3.10+
-- Git: 2. 45+
+Dieses Repository enthält die zweite Python-Aufgabe aus dem Schnupperpraktikum bei RAFISA.
 
-### Installation
-__Windows:__
+Ziel ist ein kleines textbasiertes Rollenspiel mit Python und Tkinter. Das Spiel soll einfach aufgebaut sein, aber die wichtigsten Anforderungen aus der Aufgabenstellung erfüllen.
+
+## Aufgabe
+
+Das Spiel ist ein Rollenspiel mit Charaktererstellung, einer einfachen Handlung und einem klaren Ende.
+
+Der Spieler soll zu Beginn einen Charakter erstellen:
+
+- Name eingeben
+- eine von 3 Klassen auswählen
+- eine von 3 Rassen auswählen
+- je nach Klasse und Rasse unterschiedliche Werte oder Boni erhalten
+
+Beispiel:
+
+- Ein Krieger hat mehr Stärke als ein Magier.
+- Ein Elf hat mehr Geschick als ein Mensch.
+
+Danach soll der Spieler Entscheidungen treffen können, die den Verlauf des Spiels beeinflussen.
+
+## Anforderungen
+
+- Python 3.10 oder neuer
+- keine Third-Party-Dependencies
+- Tkinter für die grafische Oberfläche
+- Darstellung des Spiels in einem GUI-Fenster
+- Eingabefeld für Text
+- lauffähiges Spiel mit Ende
+
+## Installation
+
+Repository klonen:
+
 ```cmd
 git clone https://github.com/valentindibbern/python_advanced.git
+cd python_advanced
+```
+
+Spiel starten:
+
+```cmd
 python main.py
 ```
+
+## Projektstruktur
+
+```text
+python_advanced/
+├── docs/        Aufgabenstellung
+├── src/         Quellcode des Spiels
+├── main.py      Startpunkt des Programms
+└── README.md    Projektbeschreibung
+```
+
+## Hinweise
+
+Der Code soll möglichst einfach und verständlich bleiben. Es werden keine externen Pakete verwendet.
