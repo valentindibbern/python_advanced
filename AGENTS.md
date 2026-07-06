@@ -88,7 +88,7 @@ python_advanced/
 - Verwende deutsche Umlaute wie `ä`, `ö` und `ü` direkt im Code, in Texten und
   in der Dokumentation.
 - Falls Umlaute an einer Stelle technisch unmöglich sind, schreibe dort einen
-  kurzen `TODO`-Kommentar mit der Begründung.
+  kurzen `TODO`-Kommentar mit Erinnerung oder Begründung.
 
 Guter Stil für dieses Projekt bedeutet nicht, möglichst professionell oder
 kompliziert zu wirken. Guter Stil bedeutet hier: klar, direkt, erklärbar.
