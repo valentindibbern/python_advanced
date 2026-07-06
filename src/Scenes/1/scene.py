@@ -30,6 +30,7 @@ class BallroomArrivalScene:
     def start(self) -> GameResponse:
         self.step = BallroomArrivalStep.ARRIVAL
         player_name = self.player.name
+        player_title = self.player.title
         species = self._get_species_label()
         player_class = self._get_class_label()
 
@@ -41,7 +42,7 @@ class BallroomArrivalScene:
             "Zwei Wachen prüfen deine Einladung. Dann tritt ein Angestellter in "
             "dunkelroter Hofkleidung vor, sieht kurz auf seine Liste und hebt die "
             "Stimme.\n\n"
-            f"\"{player_name}, {species}, bekannt als {player_class}, ist eingetroffen!\"\n\n"
+            f"\"{player_title} {player_name}, {species}, bekannt als {player_class}, ist eingetroffen!\"\n\n"
             "Für einen Moment richten sich mehrere Blicke auf dich. Manche wirken "
             "neugierig, manche berechnend, andere wenden sich sofort wieder ihren "
             "Gesprächen zu. Überall im Saal wird über die neu entdeckte Höhle "
@@ -284,6 +285,7 @@ class BallroomArrivalScene:
     def _get_character_data(self) -> dict[str, str | int]:
         return {
             "name": self.player.name,
+            "title": self.player.title,
             "species": self._get_species_label(),
             "player_class": self._get_class_label(),
             "knowledge": self.player.attributes.get(Attributes.KNOWLEDGE, 0),

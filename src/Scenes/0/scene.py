@@ -122,6 +122,7 @@ class CharacterCreationScene:
         self.attributes = self._get_starting_attributes(main_attribute)
         self.player = PC(
             name=self.name,
+            title="Baron",
             species=self.species,
             player_class=self.player_class,
             attributes=self.attributes,
@@ -209,6 +210,7 @@ class CharacterCreationScene:
 
         return {
             "name": self.player.name,
+            "title": self.player.title,
             "species": self.player.species.get_label() if self.player.species is not None else "-",
             "player_class": self.player.player_class.get_label()
             if self.player.player_class is not None

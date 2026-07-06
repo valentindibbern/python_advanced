@@ -260,6 +260,7 @@ class Ui:
         if character is None:
             details = [
                 "Name: -",
+                "Titel: -",
                 "Spezies: -",
                 "Klasse: -",
                 "",
@@ -273,6 +274,7 @@ class Ui:
         else:
             details = [
                 f"Name: {character.get('name', '-')}",
+                f"Titel: {character.get('title', '-')}",
                 f"Spezies: {character.get('species', '-')}",
                 f"Klasse: {character.get('player_class', '-')}",
                 "",

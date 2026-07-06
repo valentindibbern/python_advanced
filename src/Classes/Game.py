@@ -11,6 +11,7 @@ from src.Enums.InputMode import InputMode
 
 class CharacterData(TypedDict, total=False):
     name: str
+    title: str
     species: str
     player_class: str
     knowledge: int
@@ -94,6 +95,7 @@ class Game:
         attributes = self.player.attributes
         return {
             "name": self.player.name,
+            "title": self.player.title,
             "species": self.player.species.get_label() if self.player.species is not None else "-",
             "player_class": self.player.player_class.get_label()
             if self.player.player_class is not None
