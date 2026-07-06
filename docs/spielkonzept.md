@@ -308,10 +308,12 @@ soll selbst entscheiden, worin seine Figur besonders gut ist.
 
 Die Idee orientiert sich an einem einfachen Punktkaufsystem:
 
-- Jeder Spieler startet mit niedrigen Grundwerten.
-- Danach werden freie Punkte auf Wissen, Schlagfertigkeit und Verstaendnis
-  verteilt.
-- Spezies und Klasse koennen kleine Boni geben.
+- Jeder Spieler startet mit 0 Wissen, 0 Schlagfertigkeit und 0 Verstaendnis.
+- Danach waehlt der Spieler eine Verteilung von 4 Punkten im Muster 2, 1, 1.
+- Die Spezies gibt zusaetzlich einen festen Bonus von 1 Punkt:
+  Mensch gibt Schlagfertigkeit, Elf gibt Verstaendnis, Zwerg gibt Wissen.
+- Die Klasse bestimmt das persoenliche Ziel, gibt aber in diesem einfachen
+  System keinen Attributbonus.
 - Kein Attribut soll so hoch werden, dass alle Schwierigkeiten verschwinden.
 
 Das Ziel ist nicht, ein kompliziertes Regelsystem zu bauen. Die Punktverteilung
