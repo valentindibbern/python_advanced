@@ -1,26 +1,26 @@
 # AGENTS.md
 
 Diese Datei beschreibt, wie in diesem Projekt gearbeitet werden soll.
-Sie gilt fuer alle Dateien im Repository.
+Sie gilt für alle Dateien im Repository.
 
 ## Projektziel
 
-Dieses Repository enthaelt die Aufgabe "Python Advanced" aus dem
+Dieses Repository enthält die Aufgabe "Python Advanced" aus dem
 Schnupperpraktikum bei RAFISA.
 
 Ziel ist ein kleines textbasiertes Rollenspiel mit Python und Tkinter.
-Das Spiel soll einfach, verstaendlich und lauffaehig sein. Es muss nicht
-gross oder komplex sein, soll aber die Anforderungen aus der Aufgabenstellung
-sauber erfuellen.
+Das Spiel soll einfach, verständlich und lauffähig sein. Es muss nicht
+groß oder komplex sein, soll aber die Anforderungen aus der Aufgabenstellung
+sauber erfüllen.
 
 ## Wichtigste Anforderungen
 
 Das Spiel soll folgende Punkte enthalten:
 
 - ein textbasiertes Rollenspiel
-- eine grafische Oberflaeche mit Tkinter
+- eine grafische Oberfläche mit Tkinter
 - eine Darstellung des Spieltexts im Fenster
-- ein Eingabefeld fuer Text
+- ein Eingabefeld für Text
 - eine Charaktererstellung
 - Eingabe eines Namens
 - Auswahl aus 3 Klassen
@@ -30,30 +30,30 @@ Das Spiel soll folgende Punkte enthalten:
 - Entscheidungen durch den Spieler
 - ein klares Ende
 
-Beispiele fuer Boni:
+Beispiele für Boni:
 
-- Ein Krieger hat mehr Staerke als ein Magier.
+- Ein Krieger hat mehr Stärke als ein Magier.
 - Ein Elf hat mehr Geschick als ein Mensch.
 
 ## Technische Regeln
 
 - Verwende keine Third-Party-Dependencies.
 - Verwende nur Python-Standardbibliothek.
-- Verwende Tkinter fuer die GUI.
-- Halte den Code so einfach wie moeglich.
-- Schreibe Code so, dass ihn ein Python-Anfaenger erklaeren kann.
-- Vermeide unnoetige Abstraktionen.
+- Verwende Tkinter für die GUI.
+- Halte den Code so einfach wie möglich.
+- Schreibe Code so, dass ihn ein Python-Anfänger erklären kann.
+- Vermeide unnötige Abstraktionen.
 - Vermeide komplexe Frameworks, Patterns oder Metaprogrammierung.
 - Keine externen Assets einbauen, wenn sie nicht wirklich gebraucht werden.
-- Keine Netzwerkzugriffe fuer das Spiel.
+- Keine Netzwerkzugriffe für das Spiel.
 
 ## Python-Version
 
-Das Projekt soll mit einer normalen lokalen Python-Version lauffaehig sein.
-Wenn moeglich, schreibe Code kompatibel mit Python 3.10 oder neuer.
+Das Projekt soll mit einer normalen lokalen Python-Version lauffähig sein.
+Wenn möglich, schreibe Code kompatibel mit Python 3.10 oder neuer.
 
 Keine Syntax verwenden, die nur in sehr neuen Python-Versionen funktioniert,
-wenn sie nicht noetig ist.
+wenn sie nicht nötig ist.
 
 ## Projektstruktur
 
@@ -61,11 +61,12 @@ Bevorzugte Struktur:
 
 ```text
 python_advanced/
-├── docs/        Aufgabenstellung und Unterlagen
+├── docs/        Aufgabenstellung, Unterlagen und Spielinhalte
+│   └── gamecontent/ Register für Figuren, Szenen und Beschreibungen
 ├── src/         Quellcode des Spiels
 ├── main.py      Startpunkt des Programms
 ├── README.md    Projektbeschreibung
-└── AGENTS.md    Arbeitsregeln fuer dieses Projekt
+└── AGENTS.md    Arbeitsregeln für dieses Projekt
 ```
 
 `main.py` soll der einfache Startpunkt bleiben. Wenn der eigentliche Code in
@@ -75,33 +76,40 @@ python_advanced/
 
 - Verwende sprechende Namen.
 - Schreibe kurze Funktionen.
-- Eine Funktion soll moeglichst nur eine klare Aufgabe haben.
+- Eine Funktion soll möglichst nur eine klare Aufgabe haben.
 - Nutze einfache Datentypen wie `dict`, `list`, `str`, `int` und `bool`.
 - Verwende Klassen nur, wenn sie den Code wirklich einfacher machen.
-- Halte Spiellogik und GUI moeglichst getrennt.
-- Schreibe keine ueberlangen Dateien, wenn eine einfache Aufteilung hilft.
+- Halte Spiellogik und GUI möglichst getrennt.
+- Schreibe keine überlangen Dateien, wenn eine einfache Aufteilung hilft.
 - Kommentare nur dort schreiben, wo sie beim Verstehen helfen.
+- Verwende Typehinting für Funktionen, Methoden, Variablen und Datenstrukturen.
+- Typehints sollen präzise sein, auch für verschachtelte Listen,
+  Dictionaries und Objekte. Nicht nur die erste Ebene typisieren.
+- Verwende deutsche Umlaute wie `ä`, `ö` und `ü` direkt im Code, in Texten und
+  in der Dokumentation.
+- Falls Umlaute an einer Stelle technisch unmöglich sind, schreibe dort einen
+  kurzen `TODO`-Kommentar mit der Begründung.
 
-Guter Stil fuer dieses Projekt bedeutet nicht, moeglichst professionell oder
-kompliziert zu wirken. Guter Stil bedeutet hier: klar, direkt, erklaerbar.
+Guter Stil für dieses Projekt bedeutet nicht, möglichst professionell oder
+kompliziert zu wirken. Guter Stil bedeutet hier: klar, direkt, erklärbar.
 
 ## GUI-Regeln
 
 Die GUI soll mit Tkinter umgesetzt werden.
 
-Die Oberflaeche soll mindestens enthalten:
+Die Oberfläche soll mindestens enthalten:
 
-- ein Textfeld oder Label fuer die Geschichte und Rueckmeldungen
-- ein Eingabefeld fuer Spielerantworten
+- ein Textfeld oder Label für die Geschichte und Rückmeldungen
+- ein Eingabefeld für Spielerantworten
 - einen Button zum Absenden
 
 Optional sind weitere einfache Elemente erlaubt:
 
-- Buttons fuer Auswahlmoeglichkeiten
-- Labels fuer Charakterwerte
+- Buttons für Auswahlmöglichkeiten
+- Labels für Charakterwerte
 - ein Start- oder Neustart-Button
 
-Die GUI soll funktional und uebersichtlich sein. Aufwendiges Styling ist nicht
+Die GUI soll funktional und übersichtlich sein. Aufwendiges Styling ist nicht
 wichtig.
 
 ## Spiellogik
@@ -116,18 +124,18 @@ Empfohlener Aufbau:
 - Werte beeinflussen einzelne Situationen
 - Spiel endet mit Gewinn oder Verlust
 
-Das Spiel darf kurz sein. Wichtiger ist, dass es vollstaendig funktioniert.
+Das Spiel darf kurz sein. Wichtiger ist, dass es vollständig funktioniert.
 
 ## Charakterwerte
 
-Moegliche Werte:
+Mögliche Werte:
 
-- Staerke
+- Stärke
 - Geschick
 - Magie
 - Leben
 
-Es muessen nicht alle diese Werte verwendet werden. Wenn Werte verwendet
+Es müssen nicht alle diese Werte verwendet werden. Wenn Werte verwendet
 werden, sollen sie eine erkennbare Bedeutung im Spiel haben.
 
 ## Fehlerbehandlung
@@ -136,28 +144,28 @@ Das Spiel soll falsche Eingaben freundlich behandeln.
 
 Beispiele:
 
-- leere Eingaben nicht ungeprueft akzeptieren
+- leere Eingaben nicht ungeprüft akzeptieren
 - unbekannte Befehle mit einem Hinweis beantworten
 - bei Auswahlfragen klar sagen, welche Eingaben erlaubt sind
 
 Fehlerbehandlung soll einfach bleiben. Keine komplizierten Validierungs-Systeme.
 
-## Tests und Pruefung
+## Tests und Prüfung
 
-Vor Abschluss einer Aenderung soll geprueft werden:
+Vor Abschluss einer Änderung soll geprüft werden:
 
 - Startet das Spiel mit `python main.py`?
-- Oeffnet sich das Tkinter-Fenster?
+- Öffnet sich das Tkinter-Fenster?
 - Kann ein Charakter erstellt werden?
-- Fuehrt das Spiel bis zu einem Ende?
-- Gibt es keine offensichtlichen Abstuerze bei falschen Eingaben?
+- Führt das Spiel bis zu einem Ende?
+- Gibt es keine offensichtlichen Abstürze bei falschen Eingaben?
 
 Automatisierte Tests sind optional. Wenn Tests geschrieben werden, nur mit
 Standardbibliothek, zum Beispiel `unittest`.
 
 ## Dokumentation
 
-README.md soll kurz erklaeren:
+README.md soll kurz erklären:
 
 - was das Projekt ist
 - wie man das Spiel startet
@@ -165,19 +173,26 @@ README.md soll kurz erklaeren:
 
 Keine lange Dokumentation schreiben, wenn sie dem Projekt nicht hilft.
 
+Unter `docs/gamecontent/` soll ein ausführliches Register für alle
+Spielinhalte entstehen. Dort sollen NPCs, Szenen, Beschreibungen, Orte,
+Entscheidungen, Dialoge und wichtige Begriffe festgehalten werden, damit sie im
+Code, in der Dokumentation und im Spieltext überall übereinstimmen.
+
 ## Git-Hinweise
 
 - Keine generierten Dateien committen, wenn sie nicht gebraucht werden.
-- Keine `.venv`, IDE-Dateien oder temporaere Render-Dateien committen.
-- Aenderungen klein und nachvollziehbar halten.
+- Keine `.venv`, IDE-Dateien oder temporäre Render-Dateien committen.
+- Änderungen klein und nachvollziehbar halten.
+- Nach jeder erledigten Aufgabe soll ein Commit erstellt werden.
+- Die Commit-Beschreibung soll klar beschreiben, was implementiert wurde.
 
-## Wichtige Einschraenkungen
+## Wichtige Einschränkungen
 
-- Nicht versuchen, ein grosses RPG-System zu bauen.
+- Nicht versuchen, ein großes RPG-System zu bauen.
 - Nicht zu viele Features auf einmal einbauen.
-- Nicht die Aufgabenstellung ueberkomplizieren.
-- Nicht ohne Grund Dependencies hinzufuegen.
-- Nicht den Fokus auf Tkinter und lauffaehige Spiellogik verlieren.
+- Nicht die Aufgabenstellung überkomplizieren.
+- Nicht ohne Grund Dependencies hinzufügen.
+- Nicht den Fokus auf Tkinter und lauffähige Spiellogik verlieren.
 
-Wenn es mehrere moegliche Loesungen gibt, waehle die einfachste Loesung, die die
-Anforderung sauber erfuellt.
+Wenn es mehrere mögliche Lösungen gibt, wähle die einfachste Lösung, die die
+Anforderung sauber erfüllt.
