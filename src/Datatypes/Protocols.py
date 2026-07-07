@@ -17,5 +17,5 @@ class GameScene(Protocol):
     def is_done(self) -> bool:
         ...
 
-    def get_player(self) -> PC | None:
+    def get_player(self) -> PC:
         ...

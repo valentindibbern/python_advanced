@@ -3,6 +3,7 @@ from enum import Enum
 
 from src.Utils import make_response, make_choice
 from src.Classes.PC import PC
+from src.Classes.Scene import Scene
 from src.Datatypes.Models import Choice, GameResponse
 from src.Datatypes.Enums import InputMode
 
@@ -107,9 +108,9 @@ def _get_npc_overview_text() -> str:
     )
 
 
-class BallroomArrivalScene:
-    def __init__(self, player: PC, story_flags: dict[str, str]) -> None:
-        self.scene_id = "1"
+class BallroomArrivalScene(Scene):
+    def __init__(self, scene_id, scene_name, player: PC, story_flags: dict[str, str]) -> None:
+        super().__init__(scene_id, scene_name)
         self.player = player
         self.story_flags = story_flags
         self.step = BallroomArrivalStep.ARRIVAL

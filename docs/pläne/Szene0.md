@@ -26,7 +26,7 @@ Scenes/
 
 FÜr Szene `0` bleibt `npcs/` leer, weil die Charaktererstellung keine NPCs braucht.
 
-`../../src/Scenes/0/scene.py` enthÄlt eine Klasse fÜr den Ablauf der Charaktererstellung, z.B. `CharacterCreationScene`. Diese Klasse enthÄlt keine Tkinter-Logik und keine Story-Elemente.
+`../../src/Scenes/scene0/scene.py` enthÄlt eine Klasse fÜr den Ablauf der Charaktererstellung, z.B. `CharacterCreationScene`. Diese Klasse enthÄlt keine Tkinter-Logik und keine Story-Elemente.
 
 Die Szene speichert nur ihren eigenen Fortschritt:
 
@@ -177,7 +177,7 @@ Damit bleibt der Informationsfluss klar: Szenen erzeugen Daten, aber `Game` besi
 - Import-Pfade vereinheitlichen: `Ui.py` soll `InputMode` konsistent Über `src.Enums.InputMode` importieren, nicht Über `Enums.InputMode`.
 - `Game` bekommt eine kleine Ladefunktion fÜr Szene `0`, z.B. `_load_scene(scene_id: str)`.
 - `Game` kennt fÜr jetzt nur `"0"`; weitere Szenen kÖnnen spÄter in derselben Funktion ergÄnzt werden.
-- `../../src/Scenes/0/scene.py` importiert `PC`, `Class`, `Species`, `InputMode` und die Response-Typen.
+- `../../src/Scenes/scene0/scene.py` importiert `PC`, `Class`, `Species`, `InputMode` und die Response-Typen.
 - `Scene.py` in `src/Classes` bleibt als allgemeiner einfacher Datencontainer bestehen; die konkrete Szene `0` darf eine eigene Ablaufklasse haben.
 - Keine NPC-Dateien fÜr Szene `0`, weil diese Szene ausdrÜcklich keine Rollenspiel-Elemente enthalten soll.
 
