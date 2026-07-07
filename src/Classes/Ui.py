@@ -1,12 +1,9 @@
 import tkinter as tk
 from tkinter import scrolledtext
-from typing import TYPE_CHECKING
 
-from src.Enums.InputMode import InputMode
-
-if TYPE_CHECKING:
-    from src.Classes.Game import CharacterData, Game, GameResponse
-    from src.Classes.Scene import Choice
+from src.Datatypes.Enums import InputMode
+from src.Classes.Game import Game
+from src.Datatypes.Models import Choice, CharacterData, GameResponse
 
 BACKGROUND = "#050505"
 PANEL_BACKGROUND = "#101010"
@@ -136,7 +133,8 @@ class Ui:
             font=FONT,
         )
         self.text_input.grid(row=1, column=0, sticky="ew")
-        self.text_input.bind("<Return>", self._submit_text_input)
+        # Es muss ein lamda dazwischen stehen damit event abgefangen wird.
+        self.text_input.bind("<Return>", lambda event: self._submit_text_input())
 
         self.submit_button = tk.Button(
             self.input_mode_frame,
@@ -224,7 +222,7 @@ class Ui:
 
         self.show_choice_layout()
 
-    def _submit_text_input(self, event: object | None = None) -> None:
+    def _submit_text_input(self) -> None:
         if self.game is None:
             return
 

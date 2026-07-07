@@ -1,17 +1,11 @@
 from __future__ import annotations
-
 from enum import Enum
-from typing import TYPE_CHECKING
 
+from src.Utils import make_response
 from src.Classes.PC import PC
-from src.Classes.Scene import Choice
-from src.Enums.Attributes import Attributes
-from src.Enums.Class import Class
-from src.Enums.InputMode import InputMode
-from src.Enums.Species import Species
-
-if TYPE_CHECKING:
-    from src.Classes.Game import GameResponse
+from src.Classes.Scene import Scene
+from src.Datatypes.Models import Choice, GameResponse
+from src.Datatypes.Enums import Attributes, Class, Species, InputMode
 
 
 SPECIES_ATTRIBUTE_BONUSES: dict[Species, Attributes] = {
@@ -29,9 +23,43 @@ class CharacterCreationStep(Enum):
     DONE = 4
 
 
-class CharacterCreationScene:
-    def __init__(self) -> None:
-        self.scene_id = "0"
+def _get_attribute_choices() -> list[Choice]:
+    choices = []
+
+    for main_attribute in Attributes:
+        parts = []
+        for attribute in Attributes:
+            points = 2 if attribute == main_attribute else 1
+            parts.append(f"{attribute.get_label()} +{points}")
+
+        choices.append(
+            {
+                "id": f"attributes:{main_attribute.name}",
+                "label": ", ".join(parts),
+            }
+        )
+
+    return choices
+
+def _get_species_choices() -> list[Choice]:
+    return [
+        {"id": f"species:{species.name}", "label": species.get_label()}
+        for species in Species
+        if species is not Species.NOTSET
+    ]
+
+def _get_class_choices() -> list[Choice]:
+    return [
+        {"id": f"class:{player_class.name}", "label": player_class.get_label()}
+        for player_class in Class
+        if player_class is not Class.NOTSET
+    ]
+
+
+
+class CharacterCreationScene(Scene):
+    def __init__(self, scene_id: int, scene_name) -> None:
+        super().__init__(scene_id, scene_name)
         self.step: CharacterCreationStep = CharacterCreationStep.NAME
         self.name: str = ""
         self.player_class: Class = Class.NOTSET
@@ -41,7 +69,7 @@ class CharacterCreationScene:
 
     def start(self) -> GameResponse:
         self.step = CharacterCreationStep.NAME
-        return self._make_response(
+        return make_response(
             "Charaktererstellung\n\nWie heisst dein Charakter?",
             input_mode=InputMode.TEXT,
         )
@@ -53,7 +81,7 @@ class CharacterCreationScene:
             return self._response_for_current_step("Bitte wähle eine der angezeigten Optionen.")
 
         if text == "":
-            return self._make_response(
+            return make_response(
                 "Bitte gib einen Namen ein.",
                 input_mode=InputMode.TEXT,
             )
@@ -134,67 +162,35 @@ class CharacterCreationScene:
             attributes=self.attributes,
         )
         self.step = CharacterCreationStep.DONE
-        return self._make_response(
+        return make_response(
             "Charakter erstellt.\n\nDu bist bereit für die nächste Szene.",
             input_mode=InputMode.NONE,
-            character=self._get_character_data(),
+            character=self.player.get_character_data(),
         )
 
     def _response_for_current_step(self, text: str) -> GameResponse:
         if self.step == CharacterCreationStep.PLAYER_CLASS:
-            return self._make_response(
+            return make_response(
                 text,
                 input_mode=InputMode.CHOICE,
-                choices=self._get_class_choices(),
+                choices=_get_class_choices(),
             )
 
         if self.step == CharacterCreationStep.SPECIES:
-            return self._make_response(
+            return make_response(
                 text,
                 input_mode=InputMode.CHOICE,
-                choices=self._get_species_choices(),
+                choices=_get_species_choices(),
             )
 
         if self.step == CharacterCreationStep.ATTRIBUTES:
-            return self._make_response(
+            return make_response(
                 text,
                 input_mode=InputMode.CHOICE,
-                choices=self._get_attribute_choices(),
+                choices=_get_attribute_choices(),
             )
 
-        return self._make_response(text, input_mode=InputMode.TEXT)
-
-    def _get_class_choices(self) -> list[Choice]:
-        return [
-            {"id": f"class:{player_class.name}", "label": player_class.get_label()}
-            for player_class in Class
-            if player_class is not Class.NOTSET
-        ]
-
-    def _get_species_choices(self) -> list[Choice]:
-        return [
-            {"id": f"species:{species.name}", "label": species.get_label()}
-            for species in Species
-            if species is not Species.NOTSET
-        ]
-
-    def _get_attribute_choices(self) -> list[Choice]:
-        choices = []
-
-        for main_attribute in Attributes:
-            parts = []
-            for attribute in Attributes:
-                points = 2 if attribute == main_attribute else 1
-                parts.append(f"{attribute.get_label()} +{points}")
-
-            choices.append(
-                {
-                    "id": f"attributes:{main_attribute.name}",
-                    "label": ", ".join(parts),
-                }
-            )
-
-        return choices
+        return make_response(text, input_mode=InputMode.TEXT)
 
     def _get_starting_attributes(self, main_attribute: Attributes) -> dict[Attributes, int]:
         attributes = {
@@ -211,38 +207,3 @@ class CharacterCreationScene:
             attributes[species_bonus] += 1
 
         return attributes
-
-    def _get_character_data(self) -> dict[str, str | int] | None:
-        if self.player is None:
-            return None
-
-        return {
-            "name": self.player.name,
-            "title": self.player.title,
-            "species": self.player.species.get_label()
-            if self.player.species is not Species.NOTSET
-            else "-",
-            "player_class": self.player.player_class.get_label()
-            if self.player.player_class is not Class.NOTSET
-            else "-",
-            "knowledge": self.player.attributes.get(Attributes.KNOWLEDGE, 0),
-            "wit": self.player.attributes.get(Attributes.WIT, 0),
-            "understanding": self.player.attributes.get(Attributes.UNDERSTANDING, 0),
-            "goal": "-",
-        }
-
-    def _make_response(
-        self,
-        text: str,
-        input_mode: InputMode = InputMode.NONE,
-        choices: list[Choice] | None = None,
-        character: dict[str, str | int] | None = None,
-        is_finished: bool = False,
-    ) -> GameResponse:
-        return {
-            "text": text,
-            "input_mode": input_mode,
-            "choices": choices or [],
-            "character": character,
-            "is_finished": is_finished,
-        }
