@@ -34,8 +34,8 @@ class CharacterCreationScene:
         self.scene_id = "0"
         self.step: CharacterCreationStep = CharacterCreationStep.NAME
         self.name: str = ""
-        self.player_class: Class | None = None
-        self.species: Species | None = None
+        self.player_class: Class = Class.NOTSET
+        self.species: Species = Species.NOTSET
         self.attributes: dict[Attributes, int] = {}
         self.player: PC | None = None
 
@@ -91,6 +91,9 @@ class CharacterCreationScene:
         except KeyError:
             return self._response_for_current_step("Bitte wähle eine gültige Klasse.")
 
+        if self.player_class is Class.NOTSET:
+            return self._response_for_current_step("Bitte wähle eine gültige Klasse.")
+
         self.step = CharacterCreationStep.SPECIES
         return self._response_for_current_step("Wähle eine Spezies.")
 
@@ -103,6 +106,9 @@ class CharacterCreationScene:
         try:
             self.species = Species[species_name]
         except KeyError:
+            return self._response_for_current_step("Bitte wähle eine gültige Spezies.")
+
+        if self.species is Species.NOTSET:
             return self._response_for_current_step("Bitte wähle eine gültige Spezies.")
 
         self.step = CharacterCreationStep.ATTRIBUTES
@@ -162,12 +168,14 @@ class CharacterCreationScene:
         return [
             {"id": f"class:{player_class.name}", "label": player_class.get_label()}
             for player_class in Class
+            if player_class is not Class.NOTSET
         ]
 
     def _get_species_choices(self) -> list[Choice]:
         return [
             {"id": f"species:{species.name}", "label": species.get_label()}
             for species in Species
+            if species is not Species.NOTSET
         ]
 
     def _get_attribute_choices(self) -> list[Choice]:
@@ -198,7 +206,7 @@ class CharacterCreationScene:
         for attribute in Attributes:
             attributes[attribute] += 2 if attribute == main_attribute else 1
 
-        if self.species is not None:
+        if self.species is not Species.NOTSET:
             species_bonus = SPECIES_ATTRIBUTE_BONUSES[self.species]
             attributes[species_bonus] += 1
 
@@ -211,9 +219,11 @@ class CharacterCreationScene:
         return {
             "name": self.player.name,
             "title": self.player.title,
-            "species": self.player.species.get_label() if self.player.species is not None else "-",
+            "species": self.player.species.get_label()
+            if self.player.species is not Species.NOTSET
+            else "-",
             "player_class": self.player.player_class.get_label()
-            if self.player.player_class is not None
+            if self.player.player_class is not Class.NOTSET
             else "-",
             "knowledge": self.player.attributes.get(Attributes.KNOWLEDGE, 0),
             "wit": self.player.attributes.get(Attributes.WIT, 0),
