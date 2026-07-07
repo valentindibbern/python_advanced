@@ -1,10 +1,11 @@
-from src.Classes.Game import GameResponse
+from Classes.Player import Player
+from src.Datatypes.Models import GameResponse
 
 
 class Scene:
-    def __init__(self, scene_id: int, scene_name: str) -> None:
+    def __init__(self, scene_id: int, player: Player) -> None:
         self.scene_id: int = scene_id
-        self.scene_name: str = scene_name
+        self.player: Player = player
 
     def start(self) -> GameResponse:
         ...

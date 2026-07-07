@@ -1,11 +1,11 @@
 from src.Classes.Game import Game
-from src.Classes.Ui import create_ui
+from src.Classes.Ui import Ui
 
 
 def main() -> None:
     game = Game()
-    create_ui(game).run()
-
+    ui = Ui(game)
+    ui.run()
 
 if __name__ == "__main__":
     main()

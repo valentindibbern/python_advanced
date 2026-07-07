@@ -1,8 +1,8 @@
 from src.Datatypes.Enums import Attributes, Class, Species
-from src.Datatypes.Models import CharacterData
+from src.Datatypes.Models import PlayerData
 
 
-class PC:
+class Player:
     def __init__(
         self,
         name: str = "",
@@ -10,15 +10,17 @@ class PC:
         species: Species = Species.NOTSET,
         player_class: Class = Class.NOTSET,
         attributes: dict[Attributes, int] | None = None,
+        goal: str = ""
     ) -> None:
         self.name = name
         self.title = title
         self.species = species
         self.player_class = player_class
-        self.attributes = attributes or {}
+        self.attributes = attributes or {Attributes.KNOWLEDGE: 0, Attributes.WIT: 0, Attributes.UNDERSTANDING: 0}
+        self.goal = goal
 
-    def get_character_data(self) -> CharacterData:
-        data: CharacterData = {
+    def get_character_data(self) -> PlayerData:
+        return {
             "name": self.name,
             "title": self.title,
             "species": self.species.get_label() if self.species is not Species.NOTSET else "-",
@@ -26,6 +28,5 @@ class PC:
             "knowledge": self.attributes[Attributes.KNOWLEDGE],
             "wit": self.attributes[Attributes.WIT],
             "understanding": self.attributes[Attributes.UNDERSTANDING],
-            "goal": "-",
+            "goal": self.goal,
         }
-        return data

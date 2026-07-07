@@ -7,7 +7,7 @@ Es wird eine einfache Szenenstruktur vorbereitet, bei der jede Szene in einem ei
 1. Name eingeben
 2. Klasse aus vorhandener `Class`-Enum wÄhlen
 3. Spezies aus vorhandener `Species`-Enum wÄhlen
-4. `PC` erstellen und daÜrhaft in `Game.player` speichern
+4. `Player` erstellen und daÜrhaft in `Game.player` speichern
 5. Charakterdaten an die UI zurÜckgeben
 6. Danach bereit fÜr die nÄchste Szene sein
 
@@ -26,7 +26,7 @@ Scenes/
 
 FÜr Szene `0` bleibt `npcs/` leer, weil die Charaktererstellung keine NPCs braucht.
 
-`../../src/Scenes/scene0/scene.py` enthÄlt eine Klasse fÜr den Ablauf der Charaktererstellung, z.B. `CharacterCreationScene`. Diese Klasse enthÄlt keine Tkinter-Logik und keine Story-Elemente.
+`../../src/Scenes/scene1/scene.py` enthÄlt eine Klasse fÜr den Ablauf der Charaktererstellung, z.B. `CharacterCreationScene`. Diese Klasse enthÄlt keine Tkinter-Logik und keine Story-Elemente.
 
 Die Szene speichert nur ihren eigenen Fortschritt:
 
@@ -59,7 +59,7 @@ Ablauf:
 - `Game.start()` ruft `self.current_scene.start()` auf
 - `Game.handle_text_input(text)` leitet Texteingaben an die aktÜlle Szene weiter
 - `Game.handle_choice(choice_id)` leitet Choices an die aktÜlle Szene weiter
-- Wenn Szene `0` fertig ist, speichert `Game` den erzeugten `PC` in `self.player`
+- Wenn Szene `0` fertig ist, speichert `Game` den erzeugten `Player` in `self.player`
 
 Die UI bleibt unverÄndert in ihrer Rolle: Sie ruft nur `Game.start()`, `Game.handle_text_input(...)` und `Game.handle_choice(...)` auf.
 
@@ -128,7 +128,7 @@ Choices werden aus der vorhandenen `Species`-Enum erzeugt:
 Bei gÜltiger Wahl:
 
 - `self.species` wird gesetzt
-- `PC` wird erstellt
+- `Player` wird erstellt
 - `Game.player` wird daÜrhaft gesetzt
 - Charakterdaten werden an die UI geliefert
 
@@ -177,7 +177,7 @@ Damit bleibt der Informationsfluss klar: Szenen erzeugen Daten, aber `Game` besi
 - Import-Pfade vereinheitlichen: `Ui.py` soll `InputMode` konsistent Über `src.Enums.InputMode` importieren, nicht Über `Enums.InputMode`.
 - `Game` bekommt eine kleine Ladefunktion fÜr Szene `0`, z.B. `_load_scene(scene_id: str)`.
 - `Game` kennt fÜr jetzt nur `"0"`; weitere Szenen kÖnnen spÄter in derselben Funktion ergÄnzt werden.
-- `../../src/Scenes/scene0/scene.py` importiert `PC`, `Class`, `Species`, `InputMode` und die Response-Typen.
+- `../../src/Scenes/scene1/scene.py` importiert `Player`, `Class`, `Species`, `InputMode` und die Response-Typen.
 - `Scene.py` in `src/Classes` bleibt als allgemeiner einfacher Datencontainer bestehen; die konkrete Szene `0` darf eine eigene Ablaufklasse haben.
 - Keine NPC-Dateien fÜr Szene `0`, weil diese Szene ausdrÜcklich keine Rollenspiel-Elemente enthalten soll.
 
@@ -203,5 +203,5 @@ ManÜll oder per kurzem Python-Flow prÜfen:
 - Der Ordner `Scenes` liegt im Projektroot, nicht unter `src`.
 - Jede spÄtere Szene bekommt ebenfalls einen eigenen Ordner unter `Scenes`.
 - DaÜrhafte Informationen zwischen Szenen werden in `Game` gespeichert, nicht in Szenendateien.
-- `Class`, `Species` und `PC` werden jetzt direkt fÜr die Charaktererstellung verwendet.
+- `Class`, `Species` und `Player` werden jetzt direkt fÜr die Charaktererstellung verwendet.
 - Attribute/Boni werden in diesem Schritt noch nicht umgesetzt, weil du nur Name, Klasse usw. fÜr die erste technische Szene genannt hast.

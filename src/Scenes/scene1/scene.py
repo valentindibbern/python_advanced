@@ -2,270 +2,189 @@ from __future__ import annotations
 from enum import Enum
 
 from src.Utils import make_response, make_choice
-from src.Classes.PC import PC
+from src.Classes.Player import Player
 from src.Classes.Scene import Scene
 from src.Datatypes.Models import Choice, GameResponse
-from src.Datatypes.Enums import InputMode
+from src.Datatypes.Enums import Attributes, Class, Species, InputMode
 
 
-class BallroomArrivalStep(Enum):
-    ARRIVAL = 0
-    NPC_OVERVIEW = 1
-    FIRST_OBSERVATION = 2
-    DONE = 3
+SPECIES_ATTRIBUTE_BONUSES: dict[Species, Attributes] = {
+    Species.HUMAN: Attributes.WIT,
+    Species.ELF: Attributes.UNDERSTANDING,
+    Species.DWARF: Attributes.KNOWLEDGE,
+}
 
 
-def _get_npc_observations() -> dict[str, tuple[str, str]]:
-    return {
-        "npc:duchess": (
-            "duchess",
-            "Du beobachtest Herzogin Alena genauer. Sie lächelt selten, aber jede "
-            "Person in ihrer Nähe senkt unbewusst die Stimme. Sie scheint nicht "
-            "nach schnellem Reichtum zu suchen. Ihr Blick wandert immer wieder zu "
-            "jenen Adeligen, die zu laut vom Gewinn der Höhle sprechen.\n\n"
-            "Dir wird klar: Alena will Kontrolle. Wenn das Schürfrecht vergeben "
-            "wird, dann soll kein einzelnes Haus stark genug werden, den König "
-            "unter Druck zu setzen.",
-        ),
-        "npc:count": (
-            "count",
-            "Du richtest deine Aufmerksamkeit auf Graf Bastian. Er spricht mit "
-            "offenen Händen, breitem Lächeln und lauter Stimme. Um ihn herum "
-            "stehen viele Zuhörer. Einige nicken begeistert, andere wirken eher "
-            "eingeschüchtert als überzeugt.\n\n"
-            "Dir wird klar: Bastian verkauft die Höhle als Versprechen für "
-            "Reichtum und Arbeit. Doch wer ihm folgt, macht sich auch von seinem "
-            "Ehrgeiz abhängig.",
-        ),
-        "npc:guildmaster": (
-            "guildmaster",
-            "Du lauschst Meisterin Runa Steinhand. Sie redet nicht von Ruhm, "
-            "sondern von Stollen, Stützbalken, Wasseradern und Kosten. In ihrer "
-            "Hand liegt eine kleine Erzprobe, die sie nur Personen zeigt, denen "
-            "sie fachlich vertraut.\n\n"
-            "Dir wird klar: Runa will, dass Bergleute und Gilden mitentscheiden. "
-            "Sie fürchtet weniger die Höhle selbst als adelige Hast und "
-            "schlechte Planung.",
-        ),
-        "npc:envoy": (
-            "envoy",
-            "Du beobachtest Lord Caelion Silberblatt. Er spricht leise, doch er "
-            "überhört fast nichts. Seine Augen folgen nicht den lautesten "
-            "Rednern, sondern den Menschen, die bei bestimmten Namen erschrecken "
-            "oder schweigen.\n\n"
-            "Dir wird klar: Caelion sucht nach verborgener Angst. Für ihn ist "
-            "die Höhle nicht nur eine Quelle von Erz, sondern vielleicht ein Ort "
-            "alter Abmachungen und gefährlicher Geheimnisse.",
-        ),
-        "npc:secretary": (
-            "secretary",
-            "Du siehst zu Hofsekretär Marik Voss. Er steht nahe bei den Türen "
-            "zum inneren Ratssaal und hält mehrere Schriftrollen fest an sich "
-            "gedrückt. Als der Name Eisenmark fällt, schiebt er eine Rolle "
-            "hastig unter die anderen.\n\n"
-            "Dir wird klar: Marik ist offiziell neutral, aber er weiss mehr, als "
-            "er gerade sagen darf. Vielleicht kennt er alte Ansprüche, die den "
-            "ganzen Abend verändern könnten.",
-        ),
-    }
-
-def _get_npc_overview_text() -> str:
-    return (
-        "Du lässt deinen Blick durch den Ballsaal wandern. Zwischen Musik, "
-        "Seide, Rüstungsteilen und geduckten Dienern fallen dir mehrere "
-        "Personen besonders auf.\n\n"
-        "Herzogin Alena von Falkenruh steht nahe einer Marmorsäule. Ihr "
-        "dunkelgrünes Kleid ist mit silbernen Stickereien besetzt, doch sie "
-        "trägt den Schmuck nicht, um aufzufallen. Ihre Haltung ist gerade, ihr "
-        "Blick ruhig und kontrolliert. Politisch steht sie für eine vorsichtige "
-        "Nutzung der Höhle unter königlicher Kontrolle. Sie will verhindern, "
-        "dass ein einzelnes Adelshaus durch das Schürfrecht zu mächtig wird.\n\n"
-        "Graf Bastian von Eisenmark ist kaum zu übersehen. Er ist breitschultrig, "
-        "trägt einen dunklen Bart und einen schweren Mantel mit Metallspangen. "
-        "Er spricht laut, selbstbewusst und mit sichtbarem Vergnügen. Politisch "
-        "fordert er eine schnelle Ausbeutung der Höhle durch starke Adelshäuser. "
-        "Er verspricht Reichtum und Arbeit, wirkt aber rücksichtslos gegenüber "
-        "Risiken für Arbeiter, kleinere Häuser und das Land selbst.\n\n"
-        "Meisterin Runa Steinhand, eine zwergische Gildenmeisterin, steht nicht "
-        "in der Mitte des Saals, sondern dort, wo man ernsthafte Gespräche führt. "
-        "Ihr graues Haar ist in feste Zöpfe gebunden. Statt höfischem Prunk "
-        "trägt sie einfache, hochwertige Kleidung und hält ein kleines Notizbuch "
-        "bei sich. Politisch fordert sie, dass Bergleute, Handwerker und Gilden "
-        "am Schürfrecht beteiligt werden. Sie misstraut Adeligen, die nur vom "
-        "Gewinn sprechen.\n\n"
-        "Lord Caelion Silberblatt, ein elfischer Gesandter, wirkt beinahe still "
-        "neben all den lauten Stimmen. Sein helles Haar fällt glatt über die "
-        "Schultern, an seinem Hals liegt eine schmale goldene Kette. Er beobachtet "
-        "viel und spricht wenig. Politisch warnt er vor überstürztem Abbau. Er "
-        "befürchtet, dass alte Verträge, verborgene Orte oder diplomatische "
-        "Grenzen verletzt werden könnten.\n\n"
-        "Hofsekretär Marik Voss steht nahe den Türen zum inneren Ratssaal. Er "
-        "ist schmal, sauber gekleidet und hält mehrere Schriftrollen an sich "
-        "gedrückt. Sein Blick ist wach, aber nervös. Offiziell ist er neutral. "
-        "Tatsächlich kennt er vermutlich Einladungslisten, Besitzansprüche und "
-        "alte Abmachungen, die für die Entscheidung über die Höhle wichtig "
-        "werden könnten."
-    )
+class CharacterCreationStep(Enum):
+    NAME = 0
+    PLAYER_CLASS = 1
+    SPECIES = 2
+    ATTRIBUTES = 3
+    DONE = 4
 
 
-class BallroomArrivalScene(Scene):
-    def __init__(self, scene_id, scene_name, player: PC, story_flags: dict[str, str]) -> None:
-        super().__init__(scene_id, scene_name)
-        self.player = player
-        self.story_flags = story_flags
-        self.step = BallroomArrivalStep.ARRIVAL
-        self.selected_npc_ids: list[str] = []
+def _get_attribute_choices() -> list[Choice]:
+    choices = []
+
+    for main_attribute in Attributes:
+        parts = []
+        for attribute in Attributes:
+            points = 2 if attribute == main_attribute else 1
+            parts.append(f"{attribute.get_label()} +{points}")
+
+        choices.append(make_choice(f"attributes:{main_attribute.name}", ", ".join(parts)))
+
+    return choices
+
+def _get_species_choices() -> list[Choice]:
+    return [
+        {"choice_id": f"species:{species.name}", "label": species.get_label()}
+        for species in Species
+        if species is not Species.NOTSET
+    ]
+
+def _get_class_choices() -> list[Choice]:
+    return [
+        make_choice(f"class:{player_class.name}", player_class.get_label())
+        for player_class in Class
+        if player_class is not Class.NOTSET
+    ]
+
+
+class CharacterCreationScene(Scene):
+    def __init__(self, scene_id: int, player: Player) -> None:
+        super().__init__(scene_id, player)
+        self.step: CharacterCreationStep = CharacterCreationStep.NAME
+        self.player: Player = Player()
 
     def start(self) -> GameResponse:
-        self.step = BallroomArrivalStep.ARRIVAL
-        player_name = self.player.name
-        player_title = self.player.title
+        self.step = CharacterCreationStep.NAME
+        return make_response("Charaktererstellung\n\nWie heisst dein Charakter?")
 
-        return make_response(
-            "Ankunft im Ballsaal\n\n"
-            "Das schwere Tor zum Königshof öffnet sich langsam. Dahinter liegt der "
-            "grosse Saal, hell erleuchtet von Kerzen und Spiegeln. Stimmen, Schritte "
-            "und leise Musik vermischen sich zu einem unruhigen Klang.\n\n"
-            "Zwei Wachen prüfen deine Einladung. Dann tritt ein Angestellter in "
-            "dunkelroter Hofkleidung vor, sieht kurz auf seine Liste und hebt die "
-            "Stimme.\n\n"
-            f"\"{player_title} {player_name} ist eingetroffen!\"\n\n"
-            "Für einen Moment richten sich mehrere Blicke auf dich. Manche wirken "
-            "neugierig, manche berechnend, andere wenden sich sofort wieder ihren "
-            "Gesprächen zu. Überall im Saal wird über die neu entdeckte Höhle "
-            "und das Schürfrecht gesprochen.",
-            input_mode=InputMode.CHOICE,
-            choices = [make_choice("continue:look_around", "Dich im Saal umsehen")],
-            character=self.player.get_character_data(),
-        )
+    def handle_text_input(self, text: str) -> GameResponse:
+        text = text.strip()
 
-    def handle_text_input(self) -> GameResponse:
-        return self._response_for_current_step("Bitte wähle eine der angezeigten Optionen.")
+        if self.step != CharacterCreationStep.NAME:
+            return self._response_for_current_step("Bitte wähle eine der angezeigten Optionen.")
+
+        if text == "": return make_response("Bitte gib einen Namen ein.", input_mode = InputMode.TEXT)
+        self.step = CharacterCreationStep.PLAYER_CLASS
+        return self._response_for_current_step("Wähle eine Klasse.")
 
     def handle_choice(self, choice_id: str) -> GameResponse:
-        if self.step == BallroomArrivalStep.ARRIVAL:
-            return self._handle_arrival_choice(choice_id)
+        if self.step == CharacterCreationStep.PLAYER_CLASS:
+            return self._handle_class_choice(choice_id)
 
-        if self.step == BallroomArrivalStep.NPC_OVERVIEW:
-            return self._handle_npc_choice(choice_id)
+        if self.step == CharacterCreationStep.SPECIES:
+            return self._handle_species_choice(choice_id)
 
-        if self.step == BallroomArrivalStep.FIRST_OBSERVATION:
-            return self._handle_end_choice(choice_id)
+        if self.step == CharacterCreationStep.ATTRIBUTES:
+            return self._handle_attribute_choice(choice_id)
 
-        return make_response(
-            "Der Abend im Ballsaal geht weiter.",
-            input_mode=InputMode.NONE,
-            character=self.player.get_character_data(),
-        )
+        return self._response_for_current_step("Diese Auswahl ist hier nicht möglich.")
 
     def is_done(self) -> bool:
-        return self.step == BallroomArrivalStep.DONE
+        return self.step == CharacterCreationStep.DONE
 
-    def get_player(self) -> PC | None:
+    def get_player(self) -> Player | None:
         return self.player
 
-    def _handle_arrival_choice(self, choice_id: str) -> GameResponse:
-        if choice_id != "continue:look_around":
-            return self._response_for_current_step("Diese Auswahl ist hier nicht möglich.")
+    def _handle_class_choice(self, choice_id: str) -> GameResponse:
+        prefix = "class:"
+        if not choice_id.startswith(prefix):
+            return self._response_for_current_step("Bitte wähle eine gültige Klasse.")
 
-        self.step = BallroomArrivalStep.NPC_OVERVIEW
-        self.selected_npc_ids = []
-        return make_response(
-            _get_npc_overview_text(),
-            input_mode=InputMode.CHOICE,
-            choices=self._get_npc_choices(),
-            character=self.player.get_character_data(),
+        class_name = choice_id.removeprefix(prefix)
+        try:
+            self.player_class = Class[class_name]
+        except KeyError:
+            return self._response_for_current_step("Bitte wähle eine gültige Klasse.")
+
+        if self.player_class is Class.NOTSET:
+            return self._response_for_current_step("Bitte wähle eine gültige Klasse.")
+
+        self.step = CharacterCreationStep.SPECIES
+        return self._response_for_current_step("Wähle eine Spezies.")
+
+    def _handle_species_choice(self, choice_id: str) -> GameResponse:
+        prefix = "species:"
+        if not choice_id.startswith(prefix):
+            return self._response_for_current_step("Bitte wähle eine gültige Spezies.")
+
+        species_name = choice_id.removeprefix(prefix)
+        try:
+            self.species = Species[species_name]
+        except KeyError:
+            return self._response_for_current_step("Bitte wähle eine gültige Spezies.")
+
+        if self.species is Species.NOTSET:
+            return self._response_for_current_step("Bitte wähle eine gültige Spezies.")
+
+        self.step = CharacterCreationStep.ATTRIBUTES
+        return self._response_for_current_step("Verteile deine 4 Attributpunkte.")
+
+    def _handle_attribute_choice(self, choice_id: str) -> GameResponse:
+        prefix = "attributes:"
+        if not choice_id.startswith(prefix):
+            return self._response_for_current_step("Bitte wähle eine gültige Attributverteilung.")
+
+        main_attribute_name = choice_id.removeprefix(prefix)
+        try:
+            main_attribute = Attributes[main_attribute_name]
+        except KeyError:
+            return self._response_for_current_step("Bitte wähle eine gültige Attributverteilung.")
+
+        self.attributes = self._get_starting_attributes(main_attribute)
+        self.player = Player(
+            name = self.name,
+            title="Baron",
+            species=self.species,
+            player_class=self.player_class,
+            attributes=self.attributes,
         )
-
-    def _handle_npc_choice(self, choice_id: str) -> GameResponse:
-        observations = _get_npc_observations()
-
-        if choice_id not in observations:
-            return self._response_for_current_step("Diese Person kannst du gerade nicht auswählen.")
-
-        if choice_id in self.selected_npc_ids:
-            return self._response_for_current_step("Diese Person hast du schon beobachtet.")
-
-        flag_value, text = observations[choice_id]
-        if "first_observed_npc" not in self.story_flags:
-            self.story_flags["first_observed_npc"] = flag_value
-
-        self.selected_npc_ids.append(choice_id)
-
-        if len(self.selected_npc_ids) == len(observations):
-            self.step = BallroomArrivalStep.FIRST_OBSERVATION
-            temp_choices: list[Choice] = [{"id": "continue:end_scene", "label": "Dich unter die Gäste mischen"}]
-            return make_response(
-                text + "\n\nDu hast alle wichtigen Personen im Ballsaal beobachtet.",
-                input_mode = InputMode.CHOICE,
-                choices = temp_choices,
-                character = self.player.get_character_data(),
-            )
-
+        self.step = CharacterCreationStep.DONE
         return make_response(
-            text,
-            input_mode = InputMode.CHOICE,
-            choices = self._get_npc_choices(),
-            character = self.player.get_character_data(),
-        )
-
-    def _handle_end_choice(self, choice_id: str) -> GameResponse:
-        if choice_id != "continue:end_scene":
-            return self._response_for_current_step("Diese Auswahl ist hier nicht möglich.")
-
-        self.step = BallroomArrivalStep.DONE
-        return make_response(
-            "Du trittst tiefer in den Saal. Die Musik wird lauter, aber die "
-            "Gespräche um die Höhle sind überall zu hören. Der Abend hat gerade "
-            "erst begonnen.",
+            "Charakter erstellt.\n\nDu bist bereit für die nächste Szene.",
             input_mode=InputMode.NONE,
             character=self.player.get_character_data(),
         )
 
     def _response_for_current_step(self, text: str) -> GameResponse:
-        if self.step == BallroomArrivalStep.ARRIVAL:
-            temp_choices: list[Choice] = [{"id": "continue:look_around", "label": "Dich im Saal umsehen"}]
-            return make_response(
-                text,
-                input_mode = InputMode.CHOICE,
-                choices = temp_choices,
-                character = self.player.get_character_data(),
-            )
-
-        if self.step == BallroomArrivalStep.NPC_OVERVIEW:
+        if self.step == CharacterCreationStep.PLAYER_CLASS:
             return make_response(
                 text,
                 input_mode=InputMode.CHOICE,
-                choices=self._get_npc_choices(),
-                character=self.player.get_character_data(),
+                choices=_get_class_choices(),
             )
 
-        if self.step == BallroomArrivalStep.FIRST_OBSERVATION:
-            temp_choices: list[Choice] = [{"id": "continue:end_scene", "label": "Dich unter die Gäste mischen"}]
+        if self.step == CharacterCreationStep.SPECIES:
             return make_response(
                 text,
                 input_mode=InputMode.CHOICE,
-                choices= temp_choices,
-                character=self.player.get_character_data(),
+                choices=_get_species_choices(),
             )
 
-        return make_response(text, input_mode=InputMode.NONE, character=self.player.get_character_data())
+        if self.step == CharacterCreationStep.ATTRIBUTES:
+            return make_response(
+                text,
+                input_mode=InputMode.CHOICE,
+                choices=_get_attribute_choices(),
+            )
 
-    def _get_npc_choices(self) -> list[Choice]:
-        choices: list[Choice] = [
-            {"id": "npc:duchess", "label": "Herzogin Alena genauer beobachten"},
-            {"id": "npc:count", "label": "Graf Bastian genauer beobachten"},
-            {"id": "npc:guildmaster", "label": "Meisterin Runa genauer beobachten"},
-            {"id": "npc:envoy", "label": "Lord Caelion genauer beobachten"},
-            {"id": "npc:secretary", "label": "Hofsekretär Marik genauer beobachten"},
-        ]
-        return [choice for choice in choices if choice["id"] not in self.selected_npc_ids]
+        return make_response(text, input_mode=InputMode.TEXT)
 
-    def _get_species_label(self) -> str:
-        if self.player.species is None:
-            return "unbekannter Herkunft"
+    def _get_starting_attributes(self, main_attribute: Attributes) -> dict[Attributes, int]:
+        attributes = {
+            Attributes.KNOWLEDGE: 0,
+            Attributes.WIT: 0,
+            Attributes.UNDERSTANDING: 0,
+        }
 
-        return self.player.species.get_label()
+        for attribute in Attributes:
+            attributes[attribute] += 2 if attribute == main_attribute else 1
 
-    def _get_class_label(self) -> str:
-        return self.player.player_class.get_label()
+        if self.species is not Species.NOTSET:
+            species_bonus = SPECIES_ATTRIBUTE_BONUSES[self.species]
+            attributes[species_bonus] += 1
+
+        return attributes

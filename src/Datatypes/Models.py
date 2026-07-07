@@ -3,10 +3,10 @@ from typing import TypedDict
 from src.Datatypes.Enums import InputMode
 
 class Choice(TypedDict):
-    id: str
+    choice_id: str
     label: str
 
-class CharacterData(TypedDict, total=False):
+class PlayerData(TypedDict, total=False):
     name: str
     title: str
     species: str
@@ -16,10 +16,20 @@ class CharacterData(TypedDict, total=False):
     understanding: int
     goal: str
 
-
-class GameResponse(TypedDict):
+class GameResponseContent(TypedDict):
     text: str
     input_mode: InputMode
     choices: list[Choice]
-    character: CharacterData | None
+
+class GameResponse(TypedDict):
+    id: str
+    player_data: PlayerData
+    content: GameResponseContent
     is_finished: bool
+
+class UiResponseContent(TypedDict):
+    text: str
+
+class UiResponse(TypedDict):
+    id: str
+    content: UiResponseContent

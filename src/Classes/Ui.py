@@ -1,9 +1,11 @@
 import tkinter as tk
 from tkinter import scrolledtext
 
+from Datatypes.Enums import Species, Class
+from Datatypes.Models import PlayerData
 from src.Datatypes.Enums import InputMode
 from src.Classes.Game import Game
-from src.Datatypes.Models import Choice, CharacterData, GameResponse
+from src.Datatypes.Models import Choice, GameResponse
 
 BACKGROUND = "#050505"
 PANEL_BACKGROUND = "#101010"
@@ -24,7 +26,7 @@ def _normalize_all(*widgets: tk.Button | tk.Entry) -> None:
 
 
 class Ui:
-    def __init__(self, game: Game | None = None) -> None:
+    def __init__(self, game: Game) -> None:
         self.game = game
         self.root = tk.Tk()
         self.root.title("Python Advanced RPG")
@@ -35,17 +37,15 @@ class Ui:
         self._setup_grid()
         self._create_chat_history()
         self._create_choices_area()
-        self._create_character_details()
+        self._create_character_details(self.game.player.get_character_data())
         self._create_reserved_area()
+        self.accept(self.game.start())
 
-        if self.game is not None:
-            self.show_game_response(self.game.start())
-
-    def _setup_grid(self) -> None:
-        self.root.columnconfigure(0, weight=3)
-        self.root.columnconfigure(1, weight=1)
-        self.root.rowconfigure(0, weight=3)
-        self.root.rowconfigure(1, weight=1)
+    def _append_history(self, text: str) -> None:
+        self.chat_history.configure(state="normal")
+        self.chat_history.insert(tk.END, text + "\n\n")
+        self.chat_history.see(tk.END)
+        self.chat_history.configure(state="disabled")
 
     def _create_box(self, row: int, column: int, title: str) -> tk.LabelFrame:
         box = tk.LabelFrame(
@@ -63,6 +63,22 @@ class Ui:
         )
         box.grid(row=row, column=column, sticky="nsew", padx=6, pady=6)
         return box
+
+    def _create_character_details(self, player_data: PlayerData) -> None:
+        box = self._create_box(0, 1, "Charakter")
+        box.columnconfigure(0, weight=1)
+
+        self.character_details = tk.Label(
+            box,
+            text="",
+            anchor="nw",
+            justify="left",
+            bg=PANEL_BACKGROUND,
+            fg=TEXT_COLOR,
+            font=DETAIL_FONT,
+        )
+        self.character_details.grid(row=0, column=0, sticky="nsew")
+        self._update_character_details(player_data)
 
     def _create_chat_history(self) -> None:
         box = self._create_box(0, 0, "History")
@@ -159,46 +175,26 @@ class Ui:
         )
         self.submit_button.grid(row=2, column=0, sticky="e", pady=(8, 0))
 
-    def show_choice_layout(self) -> None:
-        self.choice_mode_frame.tkraise()
+    def _create_reserved_area(self) -> None:
+        box = self._create_box(1, 1, "")
+        box.columnconfigure(0, weight=1)
+        box.rowconfigure(0, weight=1)
 
-    def show_input_layout(self) -> None:
-        self.input_mode_frame.tkraise()
+        label = tk.Label(
+            box,
+            text="",
+            justify="center",
+            bg=PANEL_BACKGROUND,
+            fg=MUTED_TEXT_COLOR,
+            font=FONT,
+        )
+        label.grid(row=0, column=0, sticky="nsew")
 
-    def show_empty_choices_layout(self) -> None:
-        self.empty_choices_frame.tkraise()
-
-    def show_game_response(self, response: GameResponse) -> None:
-        self._append_history(response["text"])
-        self._update_character_details(response.get("character"))
-        self._update_input_area(response)
-
-    def _append_history(self, text: str) -> None:
-        self.chat_history.configure(state="normal")
-        self.chat_history.insert(tk.END, text + "\n\n")
-        self.chat_history.see(tk.END)
-        self.chat_history.configure(state="disabled")
-
-    def _update_input_area(self, response: GameResponse) -> None:
-        input_mode = response["input_mode"]
-
-        if response.get("is_finished"):
-            _disable_all(self.text_input, self.submit_button)
-            self.show_empty_choices_layout()
-            return
-
-        if input_mode == InputMode.TEXT:
-            _normalize_all(self.text_input, self.submit_button)
-            self.show_input_layout()
-            self.text_input.focus_set()
-            return
-
-        _disable_all(self.text_input, self.submit_button)
-
-        if input_mode == InputMode.CHOICE:
-            self._show_choices(response.get("choices", []))
-        else:
-            self.show_empty_choices_layout()
+    def _setup_grid(self) -> None:
+        self.root.columnconfigure(0, weight=3)
+        self.root.columnconfigure(1, weight=1)
+        self.root.rowconfigure(0, weight=3)
+        self.root.rowconfigure(1, weight=1)
 
     def _show_choices(self, choices: list[Choice]) -> None:
         for label in self.choice_labels:
@@ -228,92 +224,65 @@ class Ui:
 
         self.show_choice_layout()
 
-    def _submit_text_input(self) -> None:
-        if self.game is None:
-            return
-
+    def _submit_text_input(self, player_data: PlayerData) -> None:
         text = self.text_input.get()
         self.text_input.delete(0, tk.END)
         response = self.game.handle_text_input(text)
-        self.show_game_response(response)
+        self.accept(response)
 
     def _submit_choice(self, choice_id: str) -> None:
-        if self.game is None:
+        response = self.game.handle_choice(choice_id)
+        self.accept(response)
+
+    def _update_input_area(self, response: GameResponse) -> None:
+        if response.get("is_finished"):
+            _disable_all(self.text_input, self.submit_button)
+            self.show_empty_choices_layout()
             return
 
-        response = self.game.handle_choice(choice_id)
-        self.show_game_response(response)
+        if response["content"]["input_mode"] == InputMode.TEXT:
+            _normalize_all(self.text_input, self.submit_button)
+            self.show_input_layout()
+            self.text_input.focus_set()
+            return
 
-    def _create_character_details(self) -> None:
-        box = self._create_box(0, 1, "Charakter")
-        box.columnconfigure(0, weight=1)
+        _disable_all(self.text_input, self.submit_button)
 
-        self.character_details = tk.Label(
-            box,
-            text="",
-            anchor="nw",
-            justify="left",
-            bg=PANEL_BACKGROUND,
-            fg=TEXT_COLOR,
-            font=DETAIL_FONT,
-        )
-        self.character_details.grid(row=0, column=0, sticky="nsew")
-        self._update_character_details(None)
-
-    def _update_character_details(self, character: CharacterData | None) -> None:
-        if character is None:
-            details = [
-                "Name: -",
-                "Titel: -",
-                "Spezies: -",
-                "Klasse: -",
-                "",
-                "Attribute",
-                "Wissen: -",
-                "Schlagfertigkeit: -",
-                "Verständnis: -",
-                "",
-                "Ziel: -",
-            ]
+        if response["content"]["input_mode"] == InputMode.CHOICE:
+            self._show_choices(response["content"]["choices"])
         else:
-            details = [
-                f"Name: {character.get('name', '-')}",
-                f"Titel: {character.get('title', '-')}",
-                f"Spezies: {character.get('species', '-')}",
-                f"Klasse: {character.get('player_class', '-')}",
-                "",
-                "Attribute",
-                f"Wissen: {character.get('knowledge', '-')}",
-                f"Schlagfertigkeit: {character.get('wit', '-')}",
-                f"Verständnis: {character.get('understanding', '-')}",
-                "",
-                f"Ziel: {character.get('goal', '-')}",
-            ]
+            self.show_empty_choices_layout()
+
+    def _update_character_details(self, player_data: PlayerData) -> None:
+        details = [
+            f"Name: {player_data['name'] if player_data['name'] else ' - '}",
+            f"Titel: {player_data['title']}",
+            f"Spezies: {player_data['species'] if player_data['species'] != Species.NOTSET else ' - '}",
+            f"Klasse: {player_data['player_class'] if player_data['player_class'] != Class.NOTSET else ' - '}",
+            "",
+            "Attribute",
+            f"Wissen: {player_data['knowledge']}",
+            f"Schlagfertigkeit: {player_data['wit']}",
+            f"Verständnis: {player_data['understanding']}",
+            "",
+            f"Ziel: {player_data["goal"]}"
+        ]
 
         self.character_details.configure(text="\n".join(details))
 
-    def _create_reserved_area(self) -> None:
-        box = self._create_box(1, 1, "")
-        box.columnconfigure(0, weight=1)
-        box.rowconfigure(0, weight=1)
+    def show_choice_layout(self) -> None:
+        self.choice_mode_frame.tkraise()
 
-        label = tk.Label(
-            box,
-            text="",
-            justify="center",
-            bg=PANEL_BACKGROUND,
-            fg=MUTED_TEXT_COLOR,
-            font=FONT,
-        )
-        label.grid(row=0, column=0, sticky="nsew")
+    def show_input_layout(self) -> None:
+        self.input_mode_frame.tkraise()
+
+    def show_empty_choices_layout(self) -> None:
+        self.empty_choices_frame.tkraise()
+
+    def accept(self, response: GameResponse) -> None:
+        self._append_history(response["content"]["text"])
+        self._update_character_details(response["player_data"])
+        self._update_input_area(response)
 
     def run(self) -> None:
         self.root.mainloop()
-
-
-def create_ui(game: Game | None = None) -> Ui:
-    return Ui(game)
-
-
-if __name__ == "__main__":
-    create_ui().run()

@@ -1,20 +1,18 @@
-from src.Datatypes.Enums import InputMode
-from src.Datatypes.Models import Choice, CharacterData, GameResponse
+from src.Datatypes.Models import Choice, PlayerData, GameResponse, GameResponseContent
+from src.Classes.Player import Player
 
 def make_response(
-    text: str,
-    input_mode: InputMode = InputMode.NONE,
-    choices: list[Choice] | None = None,
-    character: CharacterData | None = None,
+    response_id: str,
+    content: GameResponseContent,
+    player_data: PlayerData,
     is_finished: bool = False,
 ) -> GameResponse:
     return {
-        "text": text,
-        "input_mode": input_mode,
-        "choices": choices or [],
-        "character": character,
+        "id": response_id,
+        "player_data": player_data,
+        "content": content,
         "is_finished": is_finished,
     }
 
-def make_choice(id: str, label: str) -> Choice:
-    return {"id": id, "label": label}
+def make_choice(choice_id: str, label: str) -> Choice:
+    return {"choice_id": choice_id, "label": label}
