@@ -1,7 +1,7 @@
 from __future__ import annotations
 from enum import Enum
 
-from src.Utils import make_response
+from src.Utils import make_response, make_choice
 from src.Classes.PC import PC
 from src.Datatypes.Models import Choice, GameResponse
 from src.Datatypes.Enums import InputMode
@@ -68,7 +68,6 @@ def _get_npc_observations() -> dict[str, tuple[str, str]]:
         ),
     }
 
-
 def _get_npc_overview_text() -> str:
     return (
         "Du lässt deinen Blick durch den Ballsaal wandern. Zwischen Musik, "
@@ -108,8 +107,6 @@ def _get_npc_overview_text() -> str:
     )
 
 
-
-
 class BallroomArrivalScene:
     def __init__(self, player: PC, story_flags: dict[str, str]) -> None:
         self.scene_id = "1"
@@ -122,7 +119,6 @@ class BallroomArrivalScene:
         self.step = BallroomArrivalStep.ARRIVAL
         player_name = self.player.name
         player_title = self.player.title
-        temp_choices: list[Choice] = [{"id": "continue:look_around", "label": "Dich im Saal umsehen"}]
 
         return make_response(
             "Ankunft im Ballsaal\n\n"
@@ -138,7 +134,7 @@ class BallroomArrivalScene:
             "Gesprächen zu. Überall im Saal wird über die neu entdeckte Höhle "
             "und das Schürfrecht gesprochen.",
             input_mode=InputMode.CHOICE,
-            choices = temp_choices,
+            choices = [make_choice("continue:look_around", "Dich im Saal umsehen")],
             character=self.player.get_character_data(),
         )
 
@@ -271,7 +267,4 @@ class BallroomArrivalScene:
         return self.player.species.get_label()
 
     def _get_class_label(self) -> str:
-        if self.player.player_class is None:
-            return "Gast des Hofes"
-
         return self.player.player_class.get_label()

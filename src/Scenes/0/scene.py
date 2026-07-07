@@ -1,7 +1,7 @@
 from __future__ import annotations
 from enum import Enum
 
-from src.Utils import make_response
+from src.Utils import make_response, make_choice
 from src.Classes.PC import PC
 from src.Classes.Scene import Scene
 from src.Datatypes.Models import Choice, GameResponse
@@ -32,12 +32,7 @@ def _get_attribute_choices() -> list[Choice]:
             points = 2 if attribute == main_attribute else 1
             parts.append(f"{attribute.get_label()} +{points}")
 
-        choices.append(
-            {
-                "id": f"attributes:{main_attribute.name}",
-                "label": ", ".join(parts),
-            }
-        )
+        choices.append(make_choice(f"attributes:{main_attribute.name}", ", ".join(parts)))
 
     return choices
 
@@ -50,11 +45,10 @@ def _get_species_choices() -> list[Choice]:
 
 def _get_class_choices() -> list[Choice]:
     return [
-        {"id": f"class:{player_class.name}", "label": player_class.get_label()}
+        make_choice(f"class:{player_class.name}", player_class.get_label())
         for player_class in Class
         if player_class is not Class.NOTSET
     ]
-
 
 
 class CharacterCreationScene(Scene):

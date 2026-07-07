@@ -1,7 +1,7 @@
 from typing import Protocol
 
-from Classes.Game import GameResponse
-from Classes.PC import PC
+from src.Datatypes.Models import GameResponse
+from src.Classes.PC import PC
 
 
 class GameScene(Protocol):

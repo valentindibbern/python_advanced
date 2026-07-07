@@ -15,3 +15,6 @@ def make_response(
         "character": character,
         "is_finished": is_finished,
     }
+
+def make_choice(id: str, label: str) -> Choice:
+    return {"id": id, "label": label}

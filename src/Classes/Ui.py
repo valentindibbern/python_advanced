@@ -14,8 +14,17 @@ FONT = ("Consolas", 11)
 DETAIL_FONT = ("Consolas", 14)
 
 
+def _disable_all(*widgets: tk.Button | tk.Entry) -> None:
+    for widget in widgets:
+        widget.configure(state="disabled")
+
+def _normalize_all(*widgets: tk.Button | tk.Entry) -> None:
+    for widget in widgets:
+        widget.configure(state="normal")
+
+
 class Ui:
-    def __init__(self, game: "Game | None" = None) -> None:
+    def __init__(self, game: Game | None = None) -> None:
         self.game = game
         self.root = tk.Tk()
         self.root.title("Python Advanced RPG")
@@ -159,7 +168,7 @@ class Ui:
     def show_empty_choices_layout(self) -> None:
         self.empty_choices_frame.tkraise()
 
-    def show_game_response(self, response: "GameResponse") -> None:
+    def show_game_response(self, response: GameResponse) -> None:
         self._append_history(response["text"])
         self._update_character_details(response.get("character"))
         self._update_input_area(response)
@@ -170,31 +179,28 @@ class Ui:
         self.chat_history.see(tk.END)
         self.chat_history.configure(state="disabled")
 
-    def _update_input_area(self, response: "GameResponse") -> None:
+    def _update_input_area(self, response: GameResponse) -> None:
         input_mode = response["input_mode"]
 
         if response.get("is_finished"):
-            self.text_input.configure(state="disabled")
-            self.submit_button.configure(state="disabled")
+            _disable_all(self.text_input, self.submit_button)
             self.show_empty_choices_layout()
             return
 
         if input_mode == InputMode.TEXT:
-            self.text_input.configure(state="normal")
-            self.submit_button.configure(state="normal")
+            _normalize_all(self.text_input, self.submit_button)
             self.show_input_layout()
             self.text_input.focus_set()
             return
 
-        self.text_input.configure(state="disabled")
-        self.submit_button.configure(state="disabled")
+        _disable_all(self.text_input, self.submit_button)
 
         if input_mode == InputMode.CHOICE:
             self._show_choices(response.get("choices", []))
         else:
             self.show_empty_choices_layout()
 
-    def _show_choices(self, choices: list["Choice"]) -> None:
+    def _show_choices(self, choices: list[Choice]) -> None:
         for label in self.choice_labels:
             label.destroy()
 
@@ -254,7 +260,7 @@ class Ui:
         self.character_details.grid(row=0, column=0, sticky="nsew")
         self._update_character_details(None)
 
-    def _update_character_details(self, character: "CharacterData | None") -> None:
+    def _update_character_details(self, character: CharacterData | None) -> None:
         if character is None:
             details = [
                 "Name: -",
@@ -305,7 +311,7 @@ class Ui:
         self.root.mainloop()
 
 
-def create_ui(game: "Game | None" = None) -> Ui:
+def create_ui(game: Game | None = None) -> Ui:
     return Ui(game)
 
 

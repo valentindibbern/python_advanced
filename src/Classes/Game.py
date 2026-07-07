@@ -1,7 +1,7 @@
 import importlib.util
 from pathlib import Path
 
-from Datatypes.Protocols import GameScene
+from src.Datatypes.Protocols import GameScene
 from src.Datatypes.Enums import  State
 from src.Classes.PC import PC
 from src.Datatypes.Models import GameResponse
@@ -81,7 +81,7 @@ class Game:
         spec.loader.exec_module(module)
 
         if scene_id == "0":
-            return module.CharacterCreationScene()
+            return module.CharacterCreationScene(scene_id, "CharacterCreationScene")
 
         if scene_id == "1":
             if self.player is None:

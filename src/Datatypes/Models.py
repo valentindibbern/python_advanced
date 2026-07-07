@@ -1,6 +1,6 @@
 from typing import TypedDict
 
-from Datatypes.Enums import InputMode
+from src.Datatypes.Enums import InputMode
 
 class Choice(TypedDict):
     id: str
