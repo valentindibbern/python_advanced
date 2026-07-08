@@ -121,7 +121,6 @@ class BallroomArrivalScene(Scene):
         player_title = self.player.title
 
         return make_response(
-            "Ankunft im Ballsaal\n\n"
             "Das schwere Tor zum Königshof öffnet sich langsam. Dahinter liegt der "
             "grosse Saal, hell erleuchtet von Kerzen und Spiegeln. Stimmen, Schritte "
             "und leise Musik vermischen sich zu einem unruhigen Klang.\n\n"

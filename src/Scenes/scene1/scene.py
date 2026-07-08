@@ -92,6 +92,7 @@ class CharacterCreationScene(Scene):
                 msg_id="game-character-name-error",
             )
         self.name = text
+        self.player.name = text
         self.step = CharacterCreationStep.PLAYER_CLASS
         return self._response_for_current_step("Wähle eine Klasse.")
 
@@ -127,6 +128,7 @@ class CharacterCreationScene(Scene):
         if self.player_class is Class.NOTSET:
             return self._response_for_current_step("Bitte wähle eine gültige Klasse.")
 
+        self.player.player_class = self.player_class
         self.step = CharacterCreationStep.SPECIES
         return self._response_for_current_step("Wähle eine Spezies.")
 
@@ -144,6 +146,7 @@ class CharacterCreationScene(Scene):
         if self.species is Species.NOTSET:
             return self._response_for_current_step("Bitte wähle eine gültige Spezies.")
 
+        self.player.species = self.species
         self.step = CharacterCreationStep.ATTRIBUTES
         return self._response_for_current_step("Verteile deine 4 Attributpunkte.")
 
@@ -159,13 +162,7 @@ class CharacterCreationScene(Scene):
             return self._response_for_current_step("Bitte wähle eine gültige Attributverteilung.")
 
         self.attributes = self._get_starting_attributes(main_attribute)
-        self.player = Player(
-            name = self.name,
-            title="Baron",
-            species=self.species,
-            player_class=self.player_class,
-            attributes=self.attributes,
-        )
+        self.player.attributes = self.attributes
         self.step = CharacterCreationStep.DONE
         return make_response(
             "Charakter erstellt.\n\nDu bist bereit für die nächste Szene.",

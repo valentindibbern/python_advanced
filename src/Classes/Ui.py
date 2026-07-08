@@ -3,7 +3,7 @@ from tkinter import scrolledtext
 
 from src.Datatypes.Enums import InputMode
 from src.Classes.Game import Game
-from src.Datatypes.Models import Choice, GameMsgType, GameResponse, PlayerData
+from src.Datatypes.Models import Choice, GameMsgType, GameResponse, PlayerData, UiMsgType, UiResponse
 
 BACKGROUND = "#050505"
 PANEL_BACKGROUND = "#101010"
@@ -26,6 +26,7 @@ def _normalize_all(*widgets: tk.Button | tk.Entry) -> None:
 class Ui:
     def __init__(self, game: Game) -> None:
         self.game = game
+        self.message_count: int = 0
         self.root = tk.Tk()
         self.root.title("Python Advanced RPG")
         self.root.geometry("1000x700")
@@ -225,12 +226,28 @@ class Ui:
     def _submit_text_input(self) -> None:
         text = self.text_input.get()
         self.text_input.delete(0, tk.END)
-        response = self.game.handle_text_input(text)
+        ui_response: UiResponse = self._make_ui_response(UiMsgType.TEXT, content=text)
+        response = self.game.handle_ui_response(ui_response)
         self.accept(response)
 
     def _submit_choice(self, choice_id: str) -> None:
-        response = self.game.handle_choice(choice_id)
+        ui_response: UiResponse = self._make_ui_response(UiMsgType.CHOICE, choice_id=choice_id)
+        response = self.game.handle_ui_response(ui_response)
         self.accept(response)
+
+    def _make_ui_response(
+        self,
+        msg_type: UiMsgType,
+        content: str = "",
+        choice_id: str = "",
+    ) -> UiResponse:
+        self.message_count += 1
+        return {
+            "msg_id": f"ui-{self.message_count}-{msg_type.value}",
+            "msg_type": msg_type,
+            "content": content,
+            "choice_id": choice_id,
+        }
 
     def _update_input_area(self, response: GameResponse) -> None:
         if response["msg_type"] == GameMsgType.END:
