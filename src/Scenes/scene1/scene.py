@@ -94,7 +94,9 @@ class CharacterCreationScene(Scene):
         self.name = text
         self.player.name = text
         self.step = CharacterCreationStep.PLAYER_CLASS
-        return self._response_for_current_step("Wähle eine Klasse.")
+        return self._response_for_current_step(
+            f"Dein Charakter heißt {self.name}.\n\nWähle eine Klasse."
+        )
 
     def handle_choice(self, choice_id: str) -> GameResponse:
         if self.step == CharacterCreationStep.PLAYER_CLASS:
@@ -130,7 +132,9 @@ class CharacterCreationScene(Scene):
 
         self.player.player_class = self.player_class
         self.step = CharacterCreationStep.SPECIES
-        return self._response_for_current_step("Wähle eine Spezies.")
+        return self._response_for_current_step(
+            f"Du hast die Klasse {self.player_class.get_label()} gewählt.\n\nWähle eine Spezies."
+        )
 
     def _handle_species_choice(self, choice_id: str) -> GameResponse:
         prefix = "species:"
@@ -148,7 +152,10 @@ class CharacterCreationScene(Scene):
 
         self.player.species = self.species
         self.step = CharacterCreationStep.ATTRIBUTES
-        return self._response_for_current_step("Verteile deine 4 Attributpunkte.")
+        return self._response_for_current_step(
+            f"Du hast die Spezies {self.species.get_label()} gewählt.\n\n"
+            "Verteile deine 4 Attributpunkte."
+        )
 
     def _handle_attribute_choice(self, choice_id: str) -> GameResponse:
         prefix = "attributes:"
@@ -164,8 +171,14 @@ class CharacterCreationScene(Scene):
         self.attributes = self._get_starting_attributes(main_attribute)
         self.player.attributes = self.attributes
         self.step = CharacterCreationStep.DONE
+        character_summary = (
+            f"Name: {self.name}\n"
+            f"Klasse: {self.player_class.get_label()}\n"
+            f"Spezies: {self.species.get_label()}\n"
+            f"Attributwahl: {main_attribute.get_label()}"
+        )
         return make_response(
-            "Charakter erstellt.\n\nDu bist bereit für die nächste Szene.",
+            f"Charakter erstellt.\n\n{character_summary}\n\nDu bist bereit für die nächste Szene.",
             input_mode=InputMode.NONE,
             character=self.player.get_character_data(),
             title="Charaktererstellung",
