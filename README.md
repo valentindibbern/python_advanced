@@ -4,9 +4,9 @@ Dieses Repository enthält die Aufgabe "Python Advanced" aus dem
 Schnupperpraktikum bei RAFISA.
 
 Das Projekt ist ein kleines textbasiertes Rollenspiel mit einer grafischen
-Oberfläche in Tkinter. Der Spieler erstellt zuerst eine Figur und betritt
-danach einen königlichen Ballsaal, in dem über eine neu entdeckte Höhle und
-das Schürfrecht verhandelt wird.
+Oberfläche in Tkinter. Nach einem kurzen Startbildschirm erstellt der Spieler
+eine Figur und betritt danach einen königlichen Ballsaal, in dem über eine neu
+entdeckte Höhle und das Schürfrecht verhandelt wird.
 
 ## Start
 
@@ -22,28 +22,32 @@ python main.py
 ```
 
 `main.py` erstellt ein `Game`-Objekt, übergibt es an die Tkinter-Oberfläche
-und startet die Anwendung mit `Ui.run()`.
+und startet die Anwendung mit `Ui.run()`. Im Fenster beginnt das Spiel über
+den Button `Start`. Der Button `Stop` schließt das Fenster.
 
 ## Aktueller Spielstand
 
-Der aktuelle Code enthält zwei Abschnitte:
+Der aktuelle Code enthält drei Abschnitte:
 
-1. Charaktererstellung
-2. Ankunft im Ballsaal
+1. Startbildschirm
+2. Charaktererstellung
+3. Ankunft im Ballsaal
 
-In der Charaktererstellung gibt der Spieler einen Namen ein, wählt eine von
+Der Startbildschirm wird beim Laden des Spiels angezeigt. Über `Start` beginnt
+die Charaktererstellung. Dort gibt der Spieler einen Namen ein, wählt eine von
 drei Klassen, wählt eine von drei Spezies und entscheidet sich für eine
 Attributverteilung. Danach beginnt die erste Handlungsszene im Ballsaal.
 
 Im Ballsaal kann der Spieler wichtige Personen beobachten. Dabei werden
 Informationen über ihre Ziele, Interessen und mögliche Konflikte gesammelt.
 Wenn alle wichtigen Personen beobachtet wurden, ist die Ballsaal-Szene fertig.
-Eine dritte Szene ist im aktuellen Code noch nicht vorhanden.
+Danach zeigt das Spiel eine einfache Endmeldung.
 
 ## Umgesetzte Anforderungen
 
 - textbasiertes Rollenspiel
 - Tkinter-Fenster
+- Startbildschirm mit Start- und Stop-Button
 - Textausgabe mit Verlauf
 - Eingabefeld für Texteingaben
 - klickbare Auswahlmöglichkeiten
@@ -52,7 +56,7 @@ Eine dritte Szene ist im aktuellen Code noch nicht vorhanden.
 - unterschiedliche Boni durch Spezies
 - einfache Handlung am königlichen Hof
 - Entscheidungen durch den Spieler
-- Abschluss der aktuellen Ballsaal-Szene
+- Abschluss der aktuellen Ballsaal-Szene mit Endmeldung
 - einfache Fehlerbehandlung bei leeren oder ungültigen Eingaben
 
 ## Klassen, Spezies und Attribute
@@ -112,6 +116,7 @@ Charakterdaten, ein Texteingabefeld und Auswahlmöglichkeiten an.
 
 Die konkreten Szenen liegen unter `src/Scenes/`:
 
+- `scene0`: Startbildschirm
 - `scene1`: Charaktererstellung
 - `scene2`: Ankunft im Ballsaal
 
@@ -127,7 +132,5 @@ Code verwendet werden.
 
 ## Bekannte Grenze
 
-Nach der Ballsaal-Szene gibt es noch keine weitere Szene. Der Code versucht
-danach aktuell, eine Szene mit ID `2` zu laden. Bis eine dritte Szene oder eine
-saubere Ende-Behandlung ergänzt ist, ist dieser Punkt die technische Grenze des
-Spielverlaufs.
+Nach der Ballsaal-Szene gibt es noch keine weitere spielbare Handlungsszene.
+Das Spiel beendet den aktuellen Abschnitt dort mit einer einfachen Endmeldung.

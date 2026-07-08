@@ -74,6 +74,34 @@ Hauptattribut:
 
 Danach wird der Speziesbonus addiert.
 
+## Szene 0: Startbildschirm
+
+Code-Datei: `src/Scenes/scene0/scene.py`
+
+Titel in der UI: `Start`
+
+Zweck:
+
+- Begrüßt den Spieler beim Laden des Fensters.
+- Erklärt, dass das Spiel über den Button `Start` beginnt.
+- Verweist darauf, dass `Stop` das Fenster schließt.
+
+Ablauf:
+
+1. `Game.start()` zeigt Szene 0 an.
+2. Die UI zeigt den Starttext im History-Bereich.
+3. Die Texteingabe bleibt deaktiviert.
+4. Der Spieler klickt unten rechts auf `Start`.
+5. `Game.start_game()` lädt Szene 1.
+
+Wichtige Message-ID:
+
+- `game-start-screen`
+
+Choice-IDs:
+
+- keine
+
 ## Szene 1: Charaktererstellung
 
 Code-Datei: `src/Scenes/scene1/scene.py`
@@ -199,8 +227,11 @@ Gesetztes Flag:
 Dieses Flag speichert, welche Person der Spieler im Ballsaal zuerst beobachtet
 hat. Es wird im aktuellen Code noch nicht weiter ausgewertet.
 
-## Aktuelle Grenze
+## Spielende
 
-Nach der Ballsaal-Szene gibt es noch keine weitere spielbare Szene. Der Code
-versucht danach aktuell, Szene ID `2` zu laden. Diese Szene existiert noch
-nicht.
+Nach der Ballsaal-Szene gibt es noch keine weitere spielbare Szene. Das Spiel
+setzt den Zustand auf `FINISHED` und zeigt eine einfache Endmeldung.
+
+Wichtige Message-ID:
+
+- `game-end`

@@ -15,10 +15,11 @@ Ende profitiert.
 
 Der aktuelle Code setzt den Einstieg in dieses Szenario um:
 
-1. Charakter erstellen
-2. Im Ballsaal ankommen
-3. Wichtige Personen beobachten
-4. Die aktuell implementierte Ballsaal-Szene abschließen
+1. Startbildschirm anzeigen
+2. Charakter erstellen
+3. Im Ballsaal ankommen
+4. Wichtige Personen beobachten
+5. Die aktuell implementierte Ballsaal-Szene mit einer Endmeldung abschließen
 
 ## Setting
 
@@ -38,9 +39,17 @@ Entscheidung über das Schürfrecht vorzubereiten.
 
 ## Aktueller Ablauf
 
+### Szene 0: Startbildschirm
+
+Die Startszene liegt in `src/Scenes/scene0/scene.py`.
+
+Sie wird direkt beim Laden des Fensters angezeigt. Der Spieler startet die
+Charaktererstellung über den Button `Start` im Bereich `Spiel` unten rechts.
+Der Button `Stop` schließt das Fenster.
+
 ### Szene 1: Charaktererstellung
 
-Die erste Szene liegt in `src/Scenes/scene1/scene.py`.
+Die Charaktererstellung liegt in `src/Scenes/scene1/scene.py`.
 
 Der Ablauf ist:
 
@@ -198,14 +207,16 @@ Einladungen und alte Schriftstücke, als er offen sagt.
 `Game` lädt Szenen über eine einfache `_load_scene`-Methode. Die aktuelle Szene
 verarbeitet Texteingaben und Auswahlentscheidungen. Wenn eine Szene fertig ist,
 holt `Game` den aktuellen `Player` aus der Szene und startet die nächste Szene.
+Wenn keine weitere Szene vorhanden ist, gibt `Game` eine einfache Endmeldung
+zurück und setzt den Zustand auf `FINISHED`.
 
 Die Tkinter-Oberfläche kennt keine Details der Spiellogik. Sie zeigt nur die
 `GameResponse` an und sendet Texteingaben oder Choice-IDs als `UiResponse`
-zurück.
+zurück. Die Buttons `Start` und `Stop` sind Steuerknöpfe der Oberfläche und
+keine normalen Spiel-Choices.
 
 ## Aktuelle Grenze
 
-Nach der Ballsaal-Szene ist im Code noch keine dritte Szene vorhanden. Der
-Code versucht nach dem Abschluss der Ballsaal-Szene aktuell trotzdem, die
-nächste Szene mit ID `2` zu laden. Solange diese Szene oder eine saubere
-Ende-Behandlung fehlt, ist das die technische Grenze des Spielverlaufs.
+Nach der Ballsaal-Szene ist im Code noch keine dritte Handlungsszene
+vorhanden. Das Spiel zeigt an dieser Stelle eine Endmeldung, statt eine
+fehlende Szene zu laden.

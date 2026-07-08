@@ -37,7 +37,7 @@ class Ui:
         self._create_chat_history()
         self._create_choices_area()
         self._create_character_details(self.game.player.get_character_data())
-        self._create_reserved_area()
+        self._create_control_area()
         self.accept(self.game.start())
 
     def _append_history(self, text: str) -> None:
@@ -174,20 +174,38 @@ class Ui:
         )
         self.submit_button.grid(row=2, column=0, sticky="e", pady=(8, 0))
 
-    def _create_reserved_area(self) -> None:
-        box = self._create_box(1, 1, "")
+    def _create_control_area(self) -> None:
+        box = self._create_box(1, 1, "Spiel")
         box.columnconfigure(0, weight=1)
-        box.rowconfigure(0, weight=1)
+        box.rowconfigure(2, weight=1)
 
-        label = tk.Label(
+        self.start_button: tk.Button = tk.Button(
             box,
-            text="",
-            justify="center",
-            bg=PANEL_BACKGROUND,
-            fg=MUTED_TEXT_COLOR,
+            text="Start",
+            command=self._start_game,
+            bg=BACKGROUND,
+            fg=TEXT_COLOR,
+            activebackground=TEXT_COLOR,
+            activeforeground=BACKGROUND,
+            relief="solid",
+            bd=1,
             font=FONT,
         )
-        label.grid(row=0, column=0, sticky="nsew")
+        self.start_button.grid(row=0, column=0, sticky="ew", pady=(0, 8))
+
+        self.stop_button: tk.Button = tk.Button(
+            box,
+            text="Stop",
+            command=self._stop_game,
+            bg=PANEL_BACKGROUND,
+            fg=TEXT_COLOR,
+            activebackground=TEXT_COLOR,
+            activeforeground=BACKGROUND,
+            relief="solid",
+            bd=1,
+            font=FONT,
+        )
+        self.stop_button.grid(row=1, column=0, sticky="ew")
 
     def _setup_grid(self) -> None:
         self.root.columnconfigure(0, weight=3)
@@ -234,6 +252,14 @@ class Ui:
         ui_response: UiResponse = self._make_ui_response(UiMsgType.CHOICE, choice_id=choice_id)
         response = self.game.handle_ui_response(ui_response)
         self.accept(response)
+
+    def _start_game(self) -> None:
+        response = self.game.start_game()
+        self.start_button.configure(state="disabled")
+        self.accept(response)
+
+    def _stop_game(self) -> None:
+        self.root.destroy()
 
     def _make_ui_response(
         self,

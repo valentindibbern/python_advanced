@@ -3,6 +3,7 @@ from src.Datatypes.Enums import InputMode, State
 from src.Classes.Player import Player
 from src.Classes.Scene import Scene
 from src.Datatypes.Models import GameMsgType, GameResponse, UiMsgType, UiResponse
+from src.Scenes.scene0.scene import StartScene
 from src.Scenes.scene1.scene import CharacterCreationScene
 from src.Scenes.scene2.scene import BallroomArrivalScene
 
@@ -12,7 +13,7 @@ class Game:
         self.state: State = State.START
         self.player: Player = Player()
         self.current_scene_id: int = 0
-        self.current_scene: Scene = self._load_scene(self.current_scene_id)
+        self.current_scene: Scene = StartScene(self.current_scene_id, self.player)
         self.story_flags: dict[str, str] = {}
 
     def start(self) -> GameResponse:
@@ -23,6 +24,17 @@ class Game:
             "choice_id": "",
         }
         return self.handle_ui_response(ui_response)
+
+    def start_game(self) -> GameResponse:
+        self.current_scene_id = 1
+        next_scene = self._load_scene(self.current_scene_id)
+        if next_scene is None:
+            raise ValueError(f"Invalid scene id: {self.current_scene_id}")
+
+        self.current_scene = next_scene
+        self.state = State.CHARACTER_CREATION
+        response = self.current_scene.start()
+        return self._prepare_response(response, "ui-start-game")
 
     def handle_text_input(self, text: str) -> GameResponse:
         ui_response: UiResponse = {
@@ -48,7 +60,6 @@ class Game:
 
         if ui_response["msg_type"] == UiMsgType.START:
             response = self.current_scene.start()
-            self.state = State.CHARACTER_CREATION
             return self._prepare_response(response, ui_response["msg_id"])
 
         if ui_response["msg_type"] == UiMsgType.TEXT:
@@ -69,9 +80,6 @@ class Game:
         return self._prepare_response(response, ui_response["msg_id"])
 
     def _save_scene_progress(self, response: GameResponse, answer_id: str) -> GameResponse:
-        if self.current_scene is None:
-            return self._prepare_response(response, answer_id)
-
         if self.current_scene.is_done():
             self.player = self.current_scene.get_player()
             self.state = State.SCENE_COMPLETE
@@ -85,10 +93,10 @@ class Game:
         if next_scene is None:
             self.state = State.FINISHED
             end_response = make_response(
-                previous_response["text"],
+                previous_response["text"] + "\n\nDer aktuelle Spielabschnitt ist abgeschlossen.",
                 input_mode=InputMode.NONE,
                 character=self.player.get_character_data(),
-                title=previous_response["title"],
+                title="Ende",
                 msg_type=GameMsgType.END,
                 msg_id="game-end",
             )
@@ -102,8 +110,10 @@ class Game:
     def _load_scene(self, scene_id: int) -> Scene | None:
         match scene_id:
             case 0:
-                return CharacterCreationScene(scene_id, self.player)
+                return StartScene(scene_id, self.player)
             case 1:
+                return CharacterCreationScene(scene_id, self.player)
+            case 2:
                 return BallroomArrivalScene(scene_id, self.player, self.story_flags)
 
         return None

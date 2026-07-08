@@ -1,98 +1,46 @@
-# Szene 1: Charaktererstellung
+# Szene 0: Startbildschirm
 
-Diese Datei beschreibt den aktuellen Stand der Charaktererstellung im Code.
-Die konkrete Szene liegt in `src/Scenes/scene1/scene.py`.
+Diese Datei beschreibt den Startbildschirm des Spiels.
+Die konkrete Szene liegt in `src/Scenes/scene0/scene.py`.
 
 ## Zweck
 
-Die Charaktererstellung sammelt alle Daten, die der Spieler vor der ersten
-Handlungsszene braucht:
+Szene 0 wird direkt angezeigt, wenn das Tkinter-Fenster geladen ist.
+Sie ist noch keine eigentliche Spielhandlung, sondern erklärt kurz den Start.
 
-- Name
-- Klasse
-- Spezies
-- Attributverteilung
-
-Die Szene enthält noch keine eigentliche Handlung. Sie bereitet den `Player`
-für die folgenden Szenen vor.
+Der Spieler beginnt das Spiel nicht durch Texteingabe oder eine normale
+Choice, sondern über den Button `Start` im Bereich `Spiel` unten rechts.
 
 ## Ablauf
 
-1. `Game.start()` startet die erste Szene.
-2. Die Szene fragt nach dem Namen.
-3. Ein leerer Name wird abgelehnt.
-4. Nach einem gültigen Namen folgt die Klassenauswahl.
-5. Nach der Klasse folgt die Speziesauswahl.
-6. Nach der Spezies folgt die Attributverteilung.
-7. Die Szene setzt den Schritt auf `DONE`.
-8. `Game` übernimmt den fertigen `Player` und startet die nächste Szene.
-
-## Schritte im Code
-
-Enum: `CharacterCreationStep`
-
-| Schritt | Bedeutung |
-| --- | --- |
-| `NAME` | Name per Texteingabe |
-| `PLAYER_CLASS` | Klasse per Choice |
-| `SPECIES` | Spezies per Choice |
-| `ATTRIBUTES` | Attributverteilung per Choice |
-| `DONE` | Charakter ist fertig |
-
-## Klassen
-
-Die auswählbaren Klassen kommen aus `Class`:
-
-- Aufsteiger
-- Intrigant
-- Netzwerker
-
-Die Klasse wird aktuell gespeichert, gibt aber noch keinen Attributbonus.
-
-## Spezies
-
-Die auswählbaren Spezies kommen aus `Species`:
-
-- Mensch
-- Elf
-- Zwerg
-
-Die Spezies gibt einen Attributbonus:
-
-- Mensch: +1 Schlagfertigkeit
-- Elf: +1 Verständnis
-- Zwerg: +1 Wissen
-
-## Attributverteilung
-
-Der Spieler wählt ein Hauptattribut:
-
-- Wissen
-- Schlagfertigkeit
-- Verständnis
-
-Das Hauptattribut erhält 2 Punkte. Die beiden anderen Attribute erhalten je
-1 Punkt. Danach wird der Speziesbonus addiert.
+1. `Ui` erstellt das Fenster.
+2. `Game.start()` gibt die Startszene zurück.
+3. Die UI zeigt den Starttext im History-Bereich an.
+4. Die Texteingabe bleibt deaktiviert.
+5. Im rechten unteren Grid-Bereich stehen die Buttons `Start` und `Stop`.
+6. `Start` ruft `Game.start_game()` auf.
+7. `Game.start_game()` lädt Szene 1 und startet die Charaktererstellung.
+8. `Stop` schließt das Tkinter-Fenster.
 
 ## Schnittstelle zu Game
 
-Die Szene gibt immer eine `GameResponse` zurück. Diese enthält:
+Die Startszene gibt eine normale `GameResponse` zurück.
 
-- Text für die UI
-- Eingabemodus
-- mögliche Auswahloptionen
-- aktuelle Charakterdaten
+Wichtige Werte:
 
-Wenn die Szene fertig ist, fragt `Game` über `get_player()` den fertigen
-Spieler ab und speichert ihn in `Game.player`.
+- Titel: `Start`
+- Message-ID: `game-start-screen`
+- Eingabemodus: `InputMode.NONE`
+- Keine Choice-IDs
 
 ## Schnittstelle zur UI
 
-Die UI verarbeitet keine Spiellogik. Sie zeigt nur die Antwort von `Game` an
-und sendet Texteingaben oder Choice-IDs zurück.
+Die UI behandelt `Start` und `Stop` als Steuerknöpfe, nicht als Spiel-Choices.
 
-Wichtige UI-Modi:
+- `Start` startet die Charaktererstellung und wird danach deaktiviert.
+- `Stop` ruft `root.destroy()` auf und beendet das Fenster.
 
-- `InputMode.TEXT` für den Namen
-- `InputMode.CHOICE` für Klasse, Spezies und Attribute
-- `InputMode.NONE` nach Abschluss der Szene
+## Abgrenzung
+
+Szene 0 verändert keine Charakterdaten und setzt keine Story-Flags.
+Die eigentliche Spielerstellung beginnt erst in Szene 1.
