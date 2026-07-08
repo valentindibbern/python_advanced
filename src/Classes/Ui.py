@@ -13,8 +13,7 @@ MUTED_TEXT_COLOR = "#b8b8b8"
 BORDER_COLOR = "#f2f2f2"
 FONT = ("Consolas", 11)
 DETAIL_FONT = ("Consolas", 14)
-CHARACTER_TEXT_WRAP_LENGTH = 360
-CHARACTER_VALUE_WIDTH = 44
+CHARACTER_VALUE_WIDTH = 22
 
 
 def _disable_all(*widgets: tk.Button | tk.Entry) -> None:
@@ -31,7 +30,7 @@ def _format_character_line(label: str, value: str, width: int = CHARACTER_VALUE_
         value = "-"
 
     prefix = f"{label}: "
-    wrapped_lines = textwrap.wrap(value, width=width)
+    wrapped_lines = textwrap.wrap(value, width=width, break_long_words=False, break_on_hyphens=False)
     if not wrapped_lines:
         return prefix
 
@@ -91,7 +90,6 @@ class Ui:
             bg=PANEL_BACKGROUND,
             fg=TEXT_COLOR,
             font=DETAIL_FONT,
-            wraplength=CHARACTER_TEXT_WRAP_LENGTH,
         )
         self.character_details.grid(row=0, column=0, sticky="nsew")
         self._update_character_details(player_data)
