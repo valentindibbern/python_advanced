@@ -133,6 +133,7 @@ class BallroomArrivalScene(Scene):
         self.observed_choices: list[str] = []
         self.talked_to: str = ""
         self.royal_contact: bool = False
+        self.network_contact: bool = False
         self.rival_blocked: bool = False
         self.supported_alliance: str = ""
         self.winning_alliance: str = ""
@@ -505,6 +506,7 @@ class BallroomArrivalScene(Scene):
                 "marik": Species.HUMAN,
             }[npc_id]
             if npc_species in _network_target_species(self.player.species):
+                self.network_contact = True
                 self.player.goal_status = self._status_text("Du hast eine passende neue Bekanntschaft geknüpft.")
 
     def _choose_winning_alliance(self) -> str:
@@ -535,8 +537,10 @@ class BallroomArrivalScene(Scene):
                 self.player.goal_status = "Verfehlt: Dein Rivale bleibt politisch im Spiel."
 
         elif self.player.player_class is Class.NETZWERKER:
-            if self.royal_contact:
+            if self.network_contact and self.royal_contact:
                 self.player.goal_status = "Erreicht: Deine neue Verbindung öffnet dir den Weg zum Königspaar."
+            elif self.royal_contact:
+                self.player.goal_status = "Verfehlt: Du hast das Königspaar erreicht, aber keine passende neue Freundschaft aufgebaut."
             else:
                 self.player.goal_status = "Verfehlt: Du hast keine Person des Königspaars direkt erreicht."
 

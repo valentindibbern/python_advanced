@@ -77,7 +77,8 @@ Netzwerker:
 
 - Menschlicher Spieler sucht Kontakt zu einem Zwerg oder Elf.
 - Zwergischer oder elfischer Spieler sucht Kontakt zu einem Menschen.
-- Erfolg, wenn der Spieler vor dem Königspaar `royal:speak` wählt.
+- Erfolg, wenn der Spieler eine passende neue Bekanntschaft schließt und vor
+  dem Königspaar `royal:speak` wählt.
 
 ## Attribute
 
