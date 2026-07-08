@@ -4,7 +4,7 @@ from enum import Enum
 from src.Utils import make_response, make_choice
 from src.Classes.Player import Player
 from src.Classes.Scene import Scene
-from src.Datatypes.Models import Choice, GameResponse
+from src.Datatypes.Models import Choice, GameMsgType, GameResponse
 from src.Datatypes.Enums import InputMode
 
 
@@ -136,6 +136,9 @@ class BallroomArrivalScene(Scene):
             input_mode=InputMode.CHOICE,
             choices = [make_choice("continue:look_around", "Dich im Saal umsehen")],
             character=self.player.get_character_data(),
+            title="Ankunft im Ballsaal",
+            msg_type=GameMsgType.QUESTION,
+            msg_id="game-ballroom-arrival",
         )
 
     def handle_text_input(self, text: str) -> GameResponse:
@@ -160,7 +163,7 @@ class BallroomArrivalScene(Scene):
     def is_done(self) -> bool:
         return self.step == BallroomArrivalStep.DONE
 
-    def get_player(self) -> Player | None:
+    def get_player(self) -> Player:
         return self.player
 
     def _handle_arrival_choice(self, choice_id: str) -> GameResponse:
@@ -174,6 +177,9 @@ class BallroomArrivalScene(Scene):
             input_mode=InputMode.CHOICE,
             choices=self._get_npc_choices(),
             character=self.player.get_character_data(),
+            title="Ballsaal",
+            msg_type=GameMsgType.QUESTION,
+            msg_id="game-ballroom-npc-overview",
         )
 
     def _handle_npc_choice(self, choice_id: str) -> GameResponse:
@@ -193,12 +199,15 @@ class BallroomArrivalScene(Scene):
 
         if len(self.selected_npc_ids) == len(observations):
             self.step = BallroomArrivalStep.FIRST_OBSERVATION
-            temp_choices: list[Choice] = [{"id": "continue:end_scene", "label": "Dich unter die Gäste mischen"}]
+            temp_choices: list[Choice] = [make_choice("continue:end_scene", "Dich unter die Gäste mischen")]
             return make_response(
                 text + "\n\nDu hast alle wichtigen Personen im Ballsaal beobachtet.",
                 input_mode = InputMode.CHOICE,
                 choices = temp_choices,
                 character = self.player.get_character_data(),
+                title="Ballsaal",
+                msg_type=GameMsgType.QUESTION,
+                msg_id="game-ballroom-all-observed",
             )
 
         return make_response(
@@ -206,6 +215,9 @@ class BallroomArrivalScene(Scene):
             input_mode = InputMode.CHOICE,
             choices = self._get_npc_choices(),
             character = self.player.get_character_data(),
+            title="Ballsaal",
+            msg_type=GameMsgType.QUESTION,
+            msg_id="game-ballroom-observation",
         )
 
     def _handle_end_choice(self, choice_id: str) -> GameResponse:
@@ -219,16 +231,22 @@ class BallroomArrivalScene(Scene):
             "erst begonnen.",
             input_mode=InputMode.NONE,
             character=self.player.get_character_data(),
+            title="Ballsaal",
+            msg_type=GameMsgType.INFO,
+            msg_id="game-ballroom-finished",
         )
 
     def _response_for_current_step(self, text: str) -> GameResponse:
         if self.step == BallroomArrivalStep.ARRIVAL:
-            temp_choices: list[Choice] = [{"id": "continue:look_around", "label": "Dich im Saal umsehen"}]
+            temp_choices: list[Choice] = [make_choice("continue:look_around", "Dich im Saal umsehen")]
             return make_response(
                 text,
                 input_mode = InputMode.CHOICE,
                 choices = temp_choices,
                 character = self.player.get_character_data(),
+                title="Ballsaal",
+                msg_type=GameMsgType.QUESTION,
+                msg_id="game-ballroom-arrival-choice",
             )
 
         if self.step == BallroomArrivalStep.NPC_OVERVIEW:
@@ -237,28 +255,41 @@ class BallroomArrivalScene(Scene):
                 input_mode=InputMode.CHOICE,
                 choices=self._get_npc_choices(),
                 character=self.player.get_character_data(),
+                title="Ballsaal",
+                msg_type=GameMsgType.QUESTION,
+                msg_id="game-ballroom-npc-choice",
             )
 
         if self.step == BallroomArrivalStep.FIRST_OBSERVATION:
-            temp_choices: list[Choice] = [{"id": "continue:end_scene", "label": "Dich unter die Gäste mischen"}]
+            temp_choices: list[Choice] = [make_choice("continue:end_scene", "Dich unter die Gäste mischen")]
             return make_response(
                 text,
                 input_mode=InputMode.CHOICE,
                 choices= temp_choices,
                 character=self.player.get_character_data(),
+                title="Ballsaal",
+                msg_type=GameMsgType.QUESTION,
+                msg_id="game-ballroom-end-choice",
             )
 
-        return make_response(text, input_mode=InputMode.NONE, character=self.player.get_character_data())
+        return make_response(
+            text,
+            input_mode=InputMode.NONE,
+            character=self.player.get_character_data(),
+            title="Ballsaal",
+            msg_type=GameMsgType.INFO,
+            msg_id="game-ballroom-info",
+        )
 
     def _get_npc_choices(self) -> list[Choice]:
         choices: list[Choice] = [
-            {"id": "npc:duchess", "label": "Herzogin Alena genauer beobachten"},
-            {"id": "npc:count", "label": "Graf Bastian genauer beobachten"},
-            {"id": "npc:guildmaster", "label": "Meisterin Runa genauer beobachten"},
-            {"id": "npc:envoy", "label": "Lord Caelion genauer beobachten"},
-            {"id": "npc:secretary", "label": "Hofsekretär Marik genauer beobachten"},
+            make_choice("npc:duchess", "Herzogin Alena genauer beobachten"),
+            make_choice("npc:count", "Graf Bastian genauer beobachten"),
+            make_choice("npc:guildmaster", "Meisterin Runa genauer beobachten"),
+            make_choice("npc:envoy", "Lord Caelion genauer beobachten"),
+            make_choice("npc:secretary", "Hofsekretär Marik genauer beobachten"),
         ]
-        return [choice for choice in choices if choice["id"] not in self.selected_npc_ids]
+        return [choice for choice in choices if choice["choice_id"] not in self.selected_npc_ids]
 
     def _get_species_label(self) -> str:
         if self.player.species is None:

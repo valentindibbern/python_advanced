@@ -1,4 +1,4 @@
-from Classes.Player import Player
+from src.Classes.Player import Player
 from src.Datatypes.Models import GameResponse
 
 
@@ -14,4 +14,10 @@ class Scene:
         ...
 
     def handle_choice(self, choice_id: str) -> GameResponse:
+        ...
+
+    def is_done(self) -> bool:
+        ...
+
+    def get_player(self) -> Player:
         ...

@@ -56,6 +56,16 @@ python_advanced/
 └── README.md    Projektbeschreibung
 ```
 
+## Aufbau im Code
+
+`main.py` erstellt das Spiel und die Tkinter-Oberfläche. Die Oberfläche startet
+mit `Ui.run()` die `mainloop()`.
+
+Die UI sendet Eingaben als `UiResponse` an das Spiel. Das Spiel kennt keine
+Tkinter-Elemente und antwortet mit einer `GameResponse`. Diese Antwort enthält
+den Spieltext, den Eingabemodus, mögliche Auswahloptionen und die aktuellen
+Charakterdaten.
+
 ## Hinweise
 
 Der Code soll möglichst einfach und verständlich bleiben. Es werden keine externen Pakete verwendet.

@@ -4,7 +4,7 @@ from enum import Enum
 from src.Utils import make_response, make_choice
 from src.Classes.Player import Player
 from src.Classes.Scene import Scene
-from src.Datatypes.Models import Choice, GameResponse
+from src.Datatypes.Models import Choice, GameMsgType, GameResponse
 from src.Datatypes.Enums import Attributes, Class, Species, InputMode
 
 
@@ -56,10 +56,25 @@ class CharacterCreationScene(Scene):
         super().__init__(scene_id, player)
         self.step: CharacterCreationStep = CharacterCreationStep.NAME
         self.player: Player = Player()
+        self.name: str = ""
+        self.player_class: Class = Class.NOTSET
+        self.species: Species = Species.NOTSET
+        self.attributes: dict[Attributes, int] = {
+            Attributes.KNOWLEDGE: 0,
+            Attributes.WIT: 0,
+            Attributes.UNDERSTANDING: 0,
+        }
 
     def start(self) -> GameResponse:
         self.step = CharacterCreationStep.NAME
-        return make_response("Charaktererstellung\n\nWie heisst dein Charakter?")
+        return make_response(
+            "Wie heisst dein Charakter?",
+            input_mode=InputMode.TEXT,
+            character=self.player.get_character_data(),
+            title="Charaktererstellung",
+            msg_type=GameMsgType.QUESTION,
+            msg_id="game-character-name-question",
+        )
 
     def handle_text_input(self, text: str) -> GameResponse:
         text = text.strip()
@@ -67,7 +82,16 @@ class CharacterCreationScene(Scene):
         if self.step != CharacterCreationStep.NAME:
             return self._response_for_current_step("Bitte wähle eine der angezeigten Optionen.")
 
-        if text == "": return make_response("Bitte gib einen Namen ein.", input_mode = InputMode.TEXT)
+        if text == "":
+            return make_response(
+                "Bitte gib einen Namen ein.",
+                input_mode=InputMode.TEXT,
+                character=self.player.get_character_data(),
+                title="Charaktererstellung",
+                msg_type=GameMsgType.ERROR,
+                msg_id="game-character-name-error",
+            )
+        self.name = text
         self.step = CharacterCreationStep.PLAYER_CLASS
         return self._response_for_current_step("Wähle eine Klasse.")
 
@@ -86,7 +110,7 @@ class CharacterCreationScene(Scene):
     def is_done(self) -> bool:
         return self.step == CharacterCreationStep.DONE
 
-    def get_player(self) -> Player | None:
+    def get_player(self) -> Player:
         return self.player
 
     def _handle_class_choice(self, choice_id: str) -> GameResponse:
@@ -147,6 +171,9 @@ class CharacterCreationScene(Scene):
             "Charakter erstellt.\n\nDu bist bereit für die nächste Szene.",
             input_mode=InputMode.NONE,
             character=self.player.get_character_data(),
+            title="Charaktererstellung",
+            msg_type=GameMsgType.INFO,
+            msg_id="game-character-created",
         )
 
     def _response_for_current_step(self, text: str) -> GameResponse:
@@ -155,6 +182,10 @@ class CharacterCreationScene(Scene):
                 text,
                 input_mode=InputMode.CHOICE,
                 choices=_get_class_choices(),
+                character=self.player.get_character_data(),
+                title="Charaktererstellung",
+                msg_type=GameMsgType.QUESTION,
+                msg_id="game-character-class-question",
             )
 
         if self.step == CharacterCreationStep.SPECIES:
@@ -162,6 +193,10 @@ class CharacterCreationScene(Scene):
                 text,
                 input_mode=InputMode.CHOICE,
                 choices=_get_species_choices(),
+                character=self.player.get_character_data(),
+                title="Charaktererstellung",
+                msg_type=GameMsgType.QUESTION,
+                msg_id="game-character-species-question",
             )
 
         if self.step == CharacterCreationStep.ATTRIBUTES:
@@ -169,9 +204,20 @@ class CharacterCreationScene(Scene):
                 text,
                 input_mode=InputMode.CHOICE,
                 choices=_get_attribute_choices(),
+                character=self.player.get_character_data(),
+                title="Charaktererstellung",
+                msg_type=GameMsgType.QUESTION,
+                msg_id="game-character-attributes-question",
             )
 
-        return make_response(text, input_mode=InputMode.TEXT)
+        return make_response(
+            text,
+            input_mode=InputMode.TEXT,
+            character=self.player.get_character_data(),
+            title="Charaktererstellung",
+            msg_type=GameMsgType.QUESTION,
+            msg_id="game-character-text-question",
+        )
 
     def _get_starting_attributes(self, main_attribute: Attributes) -> dict[Attributes, int]:
         attributes = {

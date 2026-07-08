@@ -1,11 +1,9 @@
 import tkinter as tk
 from tkinter import scrolledtext
 
-from Datatypes.Enums import Species, Class
-from Datatypes.Models import PlayerData
 from src.Datatypes.Enums import InputMode
 from src.Classes.Game import Game
-from src.Datatypes.Models import Choice, GameResponse
+from src.Datatypes.Models import Choice, GameMsgType, GameResponse, PlayerData
 
 BACKGROUND = "#050505"
 PANEL_BACKGROUND = "#101010"
@@ -217,14 +215,14 @@ class Ui:
                 pady=4,
             )
             label.grid(row=row, column=0, sticky="ew", pady=2)
-            label.bind("<Button-1>", lambda event, choice_id=choice["id"]: self._submit_choice(choice_id))
+            label.bind("<Button-1>", lambda event, choice_id=choice["choice_id"]: self._submit_choice(choice_id))
             label.bind("<Enter>", lambda event: event.widget.configure(bg=TEXT_COLOR, fg=BACKGROUND))
             label.bind("<Leave>", lambda event: event.widget.configure(bg=BACKGROUND, fg=TEXT_COLOR))
             self.choice_labels.append(label)
 
         self.show_choice_layout()
 
-    def _submit_text_input(self, player_data: PlayerData) -> None:
+    def _submit_text_input(self) -> None:
         text = self.text_input.get()
         self.text_input.delete(0, tk.END)
         response = self.game.handle_text_input(text)
@@ -235,12 +233,12 @@ class Ui:
         self.accept(response)
 
     def _update_input_area(self, response: GameResponse) -> None:
-        if response.get("is_finished"):
+        if response["msg_type"] == GameMsgType.END:
             _disable_all(self.text_input, self.submit_button)
             self.show_empty_choices_layout()
             return
 
-        if response["content"]["input_mode"] == InputMode.TEXT:
+        if response["input_mode"] == InputMode.TEXT:
             _normalize_all(self.text_input, self.submit_button)
             self.show_input_layout()
             self.text_input.focus_set()
@@ -248,8 +246,8 @@ class Ui:
 
         _disable_all(self.text_input, self.submit_button)
 
-        if response["content"]["input_mode"] == InputMode.CHOICE:
-            self._show_choices(response["content"]["choices"])
+        if response["input_mode"] == InputMode.CHOICE:
+            self._show_choices(response["choices"])
         else:
             self.show_empty_choices_layout()
 
@@ -257,15 +255,15 @@ class Ui:
         details = [
             f"Name: {player_data['name'] if player_data['name'] else ' - '}",
             f"Titel: {player_data['title']}",
-            f"Spezies: {player_data['species'] if player_data['species'] != Species.NOTSET else ' - '}",
-            f"Klasse: {player_data['player_class'] if player_data['player_class'] != Class.NOTSET else ' - '}",
+            f"Spezies: {player_data['species'] if player_data['species'] else ' - '}",
+            f"Klasse: {player_data['player_class'] if player_data['player_class'] else ' - '}",
             "",
             "Attribute",
             f"Wissen: {player_data['knowledge']}",
             f"Schlagfertigkeit: {player_data['wit']}",
             f"Verständnis: {player_data['understanding']}",
             "",
-            f"Ziel: {player_data["goal"]}"
+            f"Ziel: {player_data['goal'] if player_data['goal'] else ' - '}",
         ]
 
         self.character_details.configure(text="\n".join(details))
@@ -280,8 +278,11 @@ class Ui:
         self.empty_choices_frame.tkraise()
 
     def accept(self, response: GameResponse) -> None:
-        self._append_history(response["content"]["text"])
-        self._update_character_details(response["player_data"])
+        if response["title"]:
+            self._append_history(response["title"] + "\n\n" + response["text"])
+        else:
+            self._append_history(response["text"])
+        self._update_character_details(response["character"])
         self._update_input_area(response)
 
     def run(self) -> None:
