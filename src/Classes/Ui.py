@@ -1,3 +1,4 @@
+import textwrap
 import tkinter as tk
 from tkinter import scrolledtext
 
@@ -12,6 +13,8 @@ MUTED_TEXT_COLOR = "#b8b8b8"
 BORDER_COLOR = "#f2f2f2"
 FONT = ("Consolas", 11)
 DETAIL_FONT = ("Consolas", 14)
+CHARACTER_TEXT_WRAP_LENGTH = 360
+CHARACTER_VALUE_WIDTH = 44
 
 
 def _disable_all(*widgets: tk.Button | tk.Entry) -> None:
@@ -21,6 +24,19 @@ def _disable_all(*widgets: tk.Button | tk.Entry) -> None:
 def _normalize_all(*widgets: tk.Button | tk.Entry) -> None:
     for widget in widgets:
         widget.configure(state="normal")
+
+
+def _format_character_line(label: str, value: str, width: int = CHARACTER_VALUE_WIDTH) -> str:
+    if value == "":
+        value = "-"
+
+    prefix = f"{label}: "
+    wrapped_lines = textwrap.wrap(value, width=width)
+    if not wrapped_lines:
+        return prefix
+
+    indent = " " * len(prefix)
+    return prefix + ("\n" + indent).join(wrapped_lines)
 
 
 class Ui:
@@ -75,6 +91,7 @@ class Ui:
             bg=PANEL_BACKGROUND,
             fg=TEXT_COLOR,
             font=DETAIL_FONT,
+            wraplength=CHARACTER_TEXT_WRAP_LENGTH,
         )
         self.character_details.grid(row=0, column=0, sticky="nsew")
         self._update_character_details(player_data)
@@ -301,8 +318,8 @@ class Ui:
             f"Schlagfertigkeit: {player_data['wit']}",
             f"Verständnis: {player_data['understanding']}",
             "",
-            f"Ziel: {player_data['goal'] if player_data['goal'] else ' - '}",
-            f"Status: {player_data['goal_status'] if player_data['goal_status'] else ' - '}",
+            _format_character_line("Ziel", player_data["goal"]),
+            _format_character_line("Status", player_data["goal_status"]),
         ]
 
         self.character_details.configure(text="\n".join(details))
