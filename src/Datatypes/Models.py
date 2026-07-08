@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import TypedDict
 
-from src.Datatypes.Enums import InputMode
+from src.Datatypes.Enums import Attributes, InputMode
 
 
 class GameMsgType(Enum):
@@ -20,6 +20,16 @@ class UiMsgType(Enum):
 class Choice(TypedDict):
     choice_id: str
     label: str
+
+
+class AttributeCheck(TypedDict):
+    attribute: Attributes
+    attribute_label: str
+    difficulty: int
+    roll: int
+    attribute_value: int
+    total: int
+    success: bool
 
 
 class PlayerData(TypedDict):

@@ -160,6 +160,51 @@ Choice-IDs:
 - `attributes:WIT`
 - `attributes:UNDERSTANDING`
 
+## Attributproben
+
+Attributproben verwenden einen W6:
+
+```text
+W6 + Attributwert >= Schwierigkeit
+```
+
+Das Ergebnis wird im Spieltext angezeigt. Ein Erfolg gibt Zusatzinformationen
+oder schaltet eine stärkere Auswahlmöglichkeit frei. Ein Misserfolg blockiert
+den Spielablauf nicht.
+
+Modell:
+
+- `AttributeCheck`
+
+Felder:
+
+- `attribute`
+- `attribute_label`
+- `difficulty`
+- `roll`
+- `attribute_value`
+- `total`
+- `success`
+
+Proben in der Beobachtungsphase:
+
+| Choice-ID | Attribut | Schwierigkeit | Erfolgs-Flag |
+| --- | --- | --- | --- |
+| `observe:alena` | Verständnis | 5 | `hint:alena` |
+| `observe:bastian` | Schlagfertigkeit | 5 | `hint:bastian` |
+| `observe:runa` | Wissen | 5 | `hint:runa` |
+| `observe:caelion` | Verständnis | 5 | `hint:caelion` |
+| `observe:marik` | Wissen | 6 | `hint:marik` |
+
+Ratsproben:
+
+- Normale Ratsentscheidungen haben Schwierigkeit 5.
+- Bonus-Ratsentscheidungen durch Hinweise haben Schwierigkeit 4.
+- `hof` nutzt Schlagfertigkeit.
+- `gilde` nutzt Wissen.
+- `gesandtschaft` nutzt Verständnis.
+- `balanced` nutzt Verständnis.
+
 ## Szene 0: Startbildschirm
 
 Code-Datei: `src/Scenes/scene0/scene.py`
@@ -255,6 +300,8 @@ Königspaar:
 - `royal:speak`
 - `royal:listen`
 - `royal:accuse`
+- `royal:speak_responsibility`
+- `royal:accuse_bastian`
 
 Rat:
 
@@ -262,6 +309,9 @@ Rat:
 - `council:gilde`
 - `council:gesandtschaft`
 - `council:balanced`
+- `council:gilde_safety`
+- `council:gesandtschaft_rights`
+- `council:balanced_documents`
 
 Ende:
 
@@ -337,6 +387,17 @@ Gesetztes Flag:
 Dieses Flag speichert, welche Person der Spieler zuerst beobachtet hat. Es
 wird später als Erinnerung ausgewertet, bevor der Spieler ein erstes Gespräch
 beginnt und wenn er vor dem Königspaar reagiert.
+
+Erfolgs-Flags aus Attributproben:
+
+- `hint:alena`
+- `hint:bastian`
+- `hint:runa`
+- `hint:caelion`
+- `hint:marik`
+
+Diese Flags werden mit dem Wert `success` gespeichert. Sie schalten später
+zusätzliche Auswahlmöglichkeiten vor dem Königspaar oder im Rat frei.
 
 ## Spielende
 

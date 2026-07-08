@@ -57,6 +57,9 @@ unterstützen. Am Ende des Abends wird verkündet, wer die Schürfrechte erhält
 Erst dann erfährt der Spieler, ob das persönliche Ziel erreicht wurde.
 Die erste Beobachtung wird später noch einmal aufgegriffen, damit frühe
 Hinweise erzählerisch spürbar bleiben.
+Bei Beobachtungen und im Rat werden Attributproben mit einem W6 gewürfelt.
+Der passende Attributwert wird zum Würfel addiert. Erfolgreiche Proben geben
+Zusatzinformationen oder schalten stärkere Auswahlmöglichkeiten frei.
 
 ## Umgesetzte Anforderungen
 
@@ -72,6 +75,8 @@ Hinweise erzählerisch spürbar bleiben.
 - einfache Handlung am königlichen Hof
 - Entscheidungen durch den Spieler
 - längere Ballsaalhandlung mit mehreren Plotpunkten
+- W6-Attributproben für Wissen, Schlagfertigkeit und Verständnis
+- Zusatzinformationen und Bonus-Choices nach erfolgreichen Proben
 - zielabhängige Erfolgsbedingungen für Aufsteiger, Intrigant und Netzwerker
 - Zielstatus in der rechten Sidebar
 - klares Ende mit Auswertung
@@ -112,6 +117,15 @@ Hauptattribut, das 2 Punkte erhält. Die anderen beiden Attribute erhalten je
 - Mensch: +1 Schlagfertigkeit
 - Elf: +1 Verständnis
 - Zwerg: +1 Wissen
+
+Im Ballsaal nutzt das Spiel diese Werte für Attributproben:
+
+```text
+W6 + Attributwert >= Schwierigkeit
+```
+
+Ein Erfolg zeigt zusätzliche Hinweise oder neue Möglichkeiten. Ein Misserfolg
+blockiert den Spielablauf nicht.
 
 ## Projektstruktur
 

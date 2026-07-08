@@ -3,9 +3,11 @@ from enum import Enum
 from pathlib import Path
 
 from src.Utils import (
+    format_attribute_check,
     format_text,
     get_text,
     load_text_blocks,
+    make_attribute_check,
     make_choice,
     make_response,
     require_text_keys,
@@ -73,13 +75,66 @@ NPC_SPECIES: dict[str, Species] = {
     "marik": Species.HUMAN,
 }
 
-ROYAL_CHOICE_IDS: tuple[str, ...] = ("royal:speak", "royal:listen", "royal:accuse")
-COUNCIL_CHOICE_IDS: tuple[str, ...] = (
-    "council:hof",
-    "council:gilde",
-    "council:gesandtschaft",
-    "council:balanced",
-)
+OBSERVATION_CHECKS: dict[str, tuple[Attributes, int, str, str, str]] = {
+    "observe:alena": (
+        Attributes.UNDERSTANDING,
+        5,
+        "hint:alena",
+        "check_alena_success",
+        "check_alena_failure",
+    ),
+    "observe:bastian": (
+        Attributes.WIT,
+        5,
+        "hint:bastian",
+        "check_bastian_success",
+        "check_bastian_failure",
+    ),
+    "observe:runa": (
+        Attributes.KNOWLEDGE,
+        5,
+        "hint:runa",
+        "check_runa_success",
+        "check_runa_failure",
+    ),
+    "observe:caelion": (
+        Attributes.UNDERSTANDING,
+        5,
+        "hint:caelion",
+        "check_caelion_success",
+        "check_caelion_failure",
+    ),
+    "observe:marik": (
+        Attributes.KNOWLEDGE,
+        6,
+        "hint:marik",
+        "check_marik_success",
+        "check_marik_failure",
+    ),
+}
+
+COUNCIL_ALLIANCES: dict[str, str] = {
+    "council:hof": "hof",
+    "council:gilde": "gilde",
+    "council:gesandtschaft": "gesandtschaft",
+    "council:balanced": "balanced",
+    "council:gilde_safety": "gilde",
+    "council:gesandtschaft_rights": "gesandtschaft",
+    "council:balanced_documents": "balanced",
+}
+
+COUNCIL_ATTRIBUTES: dict[str, Attributes] = {
+    "hof": Attributes.WIT,
+    "gilde": Attributes.KNOWLEDGE,
+    "gesandtschaft": Attributes.UNDERSTANDING,
+    "balanced": Attributes.UNDERSTANDING,
+}
+
+BONUS_COUNCIL_CHOICES: dict[str, tuple[str, str]] = {
+    "hint:runa": ("council:gilde_safety", "choice_council_gilde_safety"),
+    "hint:caelion": ("council:gesandtschaft_rights", "choice_council_gesandtschaft_rights"),
+    "hint:marik": ("council:balanced_documents", "choice_council_balanced_documents"),
+}
 
 TEXT_DIR = Path(__file__).parent / "texts"
 SYSTEM_TEXT_SOURCE = "scene2/system.txt"
@@ -114,12 +169,19 @@ require_text_keys(
         "invalid_talk",
         "talk_royal_transition",
         "royal_speak",
+        "royal_speak_responsibility",
         "royal_accuse",
+        "royal_accuse_bastian",
         "royal_listen",
         "council_transition",
         "invalid_council",
         "council_balanced",
         "council_default",
+        "council_gilde_safety",
+        "council_gesandtschaft_rights",
+        "council_balanced_documents",
+        "council_check_success",
+        "council_check_failure",
         "council_after",
         "choice_ending",
         "ending",
@@ -146,12 +208,27 @@ require_text_keys(
         "choice_talk_caelion",
         "choice_talk_marik",
         "choice_royal_speak",
+        "choice_royal_speak_responsibility",
         "choice_royal_listen",
         "choice_royal_accuse",
+        "choice_royal_accuse_bastian",
         "choice_council_hof",
         "choice_council_gilde",
         "choice_council_gesandtschaft",
         "choice_council_balanced",
+        "choice_council_gilde_safety",
+        "choice_council_gesandtschaft_rights",
+        "choice_council_balanced_documents",
+        "check_alena_success",
+        "check_alena_failure",
+        "check_bastian_success",
+        "check_bastian_failure",
+        "check_runa_success",
+        "check_runa_failure",
+        "check_caelion_success",
+        "check_caelion_failure",
+        "check_marik_success",
+        "check_marik_failure",
     ],
     SYSTEM_TEXT_SOURCE,
 )
@@ -307,6 +384,10 @@ class BallroomArrivalScene(Scene):
 
         self.observed_choices.append(choice_id)
         text = _observation_text(choice_id)
+        check_text = self._run_observation_check(choice_id)
+        if check_text != "":
+            text += "\n\n" + check_text
+
         if len(self.observed_choices) == 1:
             self.story_flags["first_observed_npc"] = choice_id.removeprefix("observe:")
 
@@ -347,22 +428,24 @@ class BallroomArrivalScene(Scene):
         )
 
     def _handle_royal_intermezzo(self, choice_id: str) -> GameResponse:
-        if choice_id not in ROYAL_CHOICE_IDS:
+        if choice_id not in self._royal_choice_ids():
             return self._response_for_current_step(
                 get_text(SYSTEM_TEXTS, "invalid_choice", SYSTEM_TEXT_SOURCE)
             )
 
-        if choice_id == "royal:speak":
+        if choice_id in ("royal:speak", "royal:speak_responsibility"):
             self.royal_contact = True
             self.player.goal_status = self._status_text(
                 get_text(SYSTEM_TEXTS, "status_royal_contact", SYSTEM_TEXT_SOURCE)
             )
             memory_text = _first_observation_memory(self.story_flags.get("first_observed_npc", ""))
-            text = format_text(SYSTEM_TEXTS, "royal_speak", SYSTEM_TEXT_SOURCE, memory_text=memory_text)
-        elif choice_id == "royal:accuse":
+            text_key = "royal_speak_responsibility" if choice_id == "royal:speak_responsibility" else "royal_speak"
+            text = format_text(SYSTEM_TEXTS, text_key, SYSTEM_TEXT_SOURCE, memory_text=memory_text)
+        elif choice_id in ("royal:accuse", "royal:accuse_bastian"):
             self.rival_blocked = True
             memory_text = _first_observation_memory(self.story_flags.get("first_observed_npc", ""))
-            text = format_text(SYSTEM_TEXTS, "royal_accuse", SYSTEM_TEXT_SOURCE, memory_text=memory_text)
+            text_key = "royal_accuse_bastian" if choice_id == "royal:accuse_bastian" else "royal_accuse"
+            text = format_text(SYSTEM_TEXTS, text_key, SYSTEM_TEXT_SOURCE, memory_text=memory_text)
         else:
             memory_text = _first_observation_memory(self.story_flags.get("first_observed_npc", ""))
             text = format_text(SYSTEM_TEXTS, "royal_listen", SYSTEM_TEXT_SOURCE, memory_text=memory_text)
@@ -381,17 +464,17 @@ class BallroomArrivalScene(Scene):
         )
 
     def _handle_council(self, choice_id: str) -> GameResponse:
-        if choice_id not in COUNCIL_CHOICE_IDS:
+        if choice_id not in self._council_choice_ids():
             return self._response_for_current_step(
                 get_text(SYSTEM_TEXTS, "invalid_council", SYSTEM_TEXT_SOURCE)
             )
 
-        self.supported_alliance = choice_id.removeprefix("council:")
+        self.supported_alliance = COUNCIL_ALLIANCES[choice_id]
         self.winning_alliance = self._choose_winning_alliance()
         self._evaluate_goal()
         self.step = BallroomStep.FINAL
         return make_response(
-            self._council_text()
+            self._council_text(choice_id)
             + "\n\n"
             + get_text(SYSTEM_TEXTS, "council_after", SYSTEM_TEXT_SOURCE),
             input_mode=InputMode.CHOICE,
@@ -507,19 +590,45 @@ class BallroomArrivalScene(Scene):
         ]
 
     def _royal_choices(self) -> list[Choice]:
-        return [
+        choices = [
             make_choice("royal:speak", get_text(SYSTEM_TEXTS, "choice_royal_speak", SYSTEM_TEXT_SOURCE)),
             make_choice("royal:listen", get_text(SYSTEM_TEXTS, "choice_royal_listen", SYSTEM_TEXT_SOURCE)),
             make_choice("royal:accuse", get_text(SYSTEM_TEXTS, "choice_royal_accuse", SYSTEM_TEXT_SOURCE)),
         ]
+        if self.story_flags.get("hint:alena") == "success":
+            choices.append(
+                make_choice(
+                    "royal:speak_responsibility",
+                    get_text(SYSTEM_TEXTS, "choice_royal_speak_responsibility", SYSTEM_TEXT_SOURCE),
+                )
+            )
+        if self.story_flags.get("hint:bastian") == "success":
+            choices.append(
+                make_choice(
+                    "royal:accuse_bastian",
+                    get_text(SYSTEM_TEXTS, "choice_royal_accuse_bastian", SYSTEM_TEXT_SOURCE),
+                )
+            )
+        return choices
 
     def _council_choices(self) -> list[Choice]:
-        return [
+        choices = [
             make_choice("council:hof", get_text(SYSTEM_TEXTS, "choice_council_hof", SYSTEM_TEXT_SOURCE)),
             make_choice("council:gilde", get_text(SYSTEM_TEXTS, "choice_council_gilde", SYSTEM_TEXT_SOURCE)),
             make_choice("council:gesandtschaft", get_text(SYSTEM_TEXTS, "choice_council_gesandtschaft", SYSTEM_TEXT_SOURCE)),
             make_choice("council:balanced", get_text(SYSTEM_TEXTS, "choice_council_balanced", SYSTEM_TEXT_SOURCE)),
         ]
+        for flag, choice_data in BONUS_COUNCIL_CHOICES.items():
+            if self.story_flags.get(flag) == "success":
+                choice_id, text_key = choice_data
+                choices.append(make_choice(choice_id, get_text(SYSTEM_TEXTS, text_key, SYSTEM_TEXT_SOURCE)))
+        return choices
+
+    def _royal_choice_ids(self) -> list[str]:
+        return [choice["choice_id"] for choice in self._royal_choices()]
+
+    def _council_choice_ids(self) -> list[str]:
+        return [choice["choice_id"] for choice in self._council_choices()]
 
     def _talk_text(self, npc_id: str) -> str:
         return get_text(NPC_TEXTS[npc_id], "talk", NPC_TEXT_SOURCES[npc_id])
@@ -545,14 +654,6 @@ class BallroomArrivalScene(Scene):
                 )
 
     def _choose_winning_alliance(self) -> str:
-        if self.supported_alliance == "balanced" and self.player.attributes[Attributes.UNDERSTANDING] >= 3:
-            return "balanced"
-        if self.supported_alliance == "gilde" and self.player.attributes[Attributes.KNOWLEDGE] >= 3:
-            return "gilde"
-        if self.supported_alliance == "hof" and self.player.attributes[Attributes.WIT] >= 3:
-            return "hof"
-        if self.supported_alliance == "gesandtschaft" and self.player.attributes[Attributes.UNDERSTANDING] >= 3:
-            return "gesandtschaft"
         return self.supported_alliance
 
     def _evaluate_goal(self) -> None:
@@ -579,12 +680,43 @@ class BallroomArrivalScene(Scene):
             else:
                 self.player.goal_status = "Verfehlt: Du hast keine Person des Königspaars direkt erreicht."
 
-    def _council_text(self) -> str:
-        label = ALLIANCE_LABELS[self.winning_alliance]
-        if self.winning_alliance == "balanced":
-            return get_text(SYSTEM_TEXTS, "council_balanced", SYSTEM_TEXT_SOURCE)
+    def _run_observation_check(self, choice_id: str) -> str:
+        check_data = OBSERVATION_CHECKS.get(choice_id)
+        if check_data is None:
+            return ""
 
-        return format_text(SYSTEM_TEXTS, "council_default", SYSTEM_TEXT_SOURCE, alliance_label=label)
+        attribute, difficulty, flag, success_key, failure_key = check_data
+        check = make_attribute_check(self.player, attribute, difficulty)
+        if check["success"]:
+            self.story_flags[flag] = "success"
+            result_text = get_text(SYSTEM_TEXTS, success_key, SYSTEM_TEXT_SOURCE)
+        else:
+            result_text = get_text(SYSTEM_TEXTS, failure_key, SYSTEM_TEXT_SOURCE)
+
+        return format_attribute_check(check) + "\n" + result_text
+
+    def _council_check_text(self, choice_id: str) -> str:
+        attribute = COUNCIL_ATTRIBUTES[self.supported_alliance]
+        normal_choices = ("council:hof", "council:gilde", "council:gesandtschaft", "council:balanced")
+        difficulty = 5 if choice_id in normal_choices else 4
+        check = make_attribute_check(self.player, attribute, difficulty)
+        result_key = "council_check_success" if check["success"] else "council_check_failure"
+        return format_attribute_check(check) + "\n" + get_text(SYSTEM_TEXTS, result_key, SYSTEM_TEXT_SOURCE)
+
+    def _council_text(self, choice_id: str) -> str:
+        if choice_id == "council:gilde_safety":
+            base_text = get_text(SYSTEM_TEXTS, "council_gilde_safety", SYSTEM_TEXT_SOURCE)
+        elif choice_id == "council:gesandtschaft_rights":
+            base_text = get_text(SYSTEM_TEXTS, "council_gesandtschaft_rights", SYSTEM_TEXT_SOURCE)
+        elif choice_id == "council:balanced_documents":
+            base_text = get_text(SYSTEM_TEXTS, "council_balanced_documents", SYSTEM_TEXT_SOURCE)
+        elif self.winning_alliance == "balanced":
+            base_text = get_text(SYSTEM_TEXTS, "council_balanced", SYSTEM_TEXT_SOURCE)
+        else:
+            label = ALLIANCE_LABELS[self.winning_alliance]
+            base_text = format_text(SYSTEM_TEXTS, "council_default", SYSTEM_TEXT_SOURCE, alliance_label=label)
+
+        return base_text + "\n\n" + self._council_check_text(choice_id)
 
     def _status_text(self, text: str) -> str:
         return format_text(SYSTEM_TEXTS, "status_prefix", SYSTEM_TEXT_SOURCE, text=text)

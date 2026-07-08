@@ -60,12 +60,26 @@ Du trittst vor und sprichst die Königin direkt an. Du formulierst keine Forderu
 
 Meridia sieht dich lange an. Dann sagt sie: "Eine seltene Antwort an einem Abend voller Hunger."
 
+[royal_speak_responsibility]
+Du trittst vor und sprichst die Königin direkt an. Weil du Alenas Sorge richtig erkannt hast, wählst du deine Worte vorsichtig: Kein Vertrag darf so stark werden, dass die Krone später keine Verantwortung mehr tragen kann.
+
+{memory_text}
+
+Meridia nickt kaum sichtbar. "Ihr sprecht nicht nur von Besitz", sagt sie. "Ihr sprecht von Folgen."
+
 [royal_accuse]
 Du nutzt den Moment für einen Angriff. Du erwähnst Widersprüche in den Aussagen deines Rivalen und zwingst Marik, eine passende Urkunde vorzulesen. Der Saal wird still.
 
 {memory_text}
 
 Die betroffene Partei verliert sichtbar an Gewicht. Niemand wird aus dem Saal geworfen, aber einige Türen schließen sich leise.
+
+[royal_accuse_bastian]
+Du nutzt den Moment für einen gezielten Angriff. Bastians große Worte klingen plötzlich hohl, als du ruhig zeigst, wo sein Mut endet und wo sein Gewinn beginnt.
+
+{memory_text}
+
+Einige Gäste senken die Gläser. Bastian lacht zu spät. Die betroffene Seite verliert Gewicht, ohne dass du laut werden musst.
 
 [royal_listen]
 Du bleibst am Rand und hörst zu. Die Königin fragt nicht nach Schmeichelei, sondern nach Folgen: Wer trägt Verantwortung, wenn die erste Mine einstürzt? Wer ersetzt zerstörte Quellen? Wer spricht für Arbeiter, Händler und Grenzorte?
@@ -89,6 +103,27 @@ Der Vorschlag ist unbequem, weil niemand alles bekommt. Gerade deshalb wird es s
 Du stellst dich im Rat deutlich hinter die {alliance_label}. Deine Worte werden nicht allein entscheiden, aber sie geben einer Seite genau in dem Moment Gewicht, in dem Marik die alten Ansprüche vorliest.
 
 Es wird gestritten, gezählt, verbessert und gedroht. Marik liest eine Zeile zweimal, weil beim ersten Mal zu viele Gäste gleichzeitig widersprechen. Am Ende erkennt man an den Gesichtern, wohin sich die Entscheidung neigt.
+
+[council_gilde_safety]
+Du unterstützt den Gildenpakt und sprichst nicht von Stolz, sondern von Sicherheit. Runas Warnungen helfen dir: Stützbalken, Wasseradern und Arbeiterrechte werden plötzlich zu Argumenten, die niemand einfach weglächeln kann.
+
+Die Gilde bekommt nicht nur Gewicht, weil sie graben kann, sondern weil sie die Gefahr der Tiefe ernst nimmt.
+
+[council_gesandtschaft_rights]
+Du unterstützt die elfische Gesandtschaft und erinnerst den Rat daran, dass alte Rechte nicht verschwinden, nur weil sie unbequem geworden sind.
+
+Caelions Sorge bekommt dadurch eine klare Form. Der Rat merkt, dass ein gebrochener Vertrag später mehr kosten kann als jede Verzögerung.
+
+[council_balanced_documents]
+Du schlägst einen gemeinsamen Kronenpakt vor und verweist auf die alten Schriftstücke in Mariks Mappe. Kein Lager kann sie allein für sich nutzen, ohne eine zweite Seite zu verletzen.
+
+Marik liest langsamer, als er die Siegel erkennt. Der gemeinsame Pakt wird nicht bequem, aber plötzlich wirkt er wie der einzige Weg, der nicht sofort neuen Streit erzeugt.
+
+[council_check_success]
+Deine Begründung hält dem Druck des Rats stand. Auch wer dir nicht zustimmt, muss deine Argumente ernst nehmen.
+
+[council_check_failure]
+Du bringst deine Seite voran, aber nicht jeder Gedanke sitzt. Einige Ratsmitglieder bleiben skeptisch, und andere nutzen jede Lücke.
 
 [council_after]
 Die Beratung dauert länger, als alle erwartet haben. Einmal fällt ein Glas um, und niemand lacht. Als die Türen wieder aufgehen, sind die Kerzen kurz vor dem Erlöschen. Der Ball ist fast vorbei, aber die Verkündung steht noch aus.
@@ -176,11 +211,17 @@ Mit Hofsekretär Marik sprechen
 [choice_royal_speak]
 Selbst vor der Königin sprechen
 
+[choice_royal_speak_responsibility]
+Verantwortung vor der Königin betonen
+
 [choice_royal_listen]
 Zuhören und Informationen sammeln
 
 [choice_royal_accuse]
 Den Rivalen öffentlich schwächen
+
+[choice_royal_accuse_bastian]
+Bastians Übertreibung geschickt offenlegen
 
 [choice_council_hof]
 Die königliche Hofallianz unterstützen
@@ -193,3 +234,42 @@ Die elfische Gesandtschaft unterstützen
 
 [choice_council_balanced]
 Einen gemeinsamen Kronenpakt vorschlagen
+
+[choice_council_gilde_safety]
+Den Gildenpakt mit Sicherheitswissen unterstützen
+
+[choice_council_gesandtschaft_rights]
+Die Gesandtschaft mit alten Rechten unterstützen
+
+[choice_council_balanced_documents]
+Den Kronenpakt mit alten Schriftstücken begründen
+
+[check_alena_success]
+Du erkennst, dass Alena nicht nur Macht sichern will. Sie fürchtet einen Vertrag, der die Krone später an fremde Interessen bindet.
+
+[check_alena_failure]
+Alenas Worte bleiben höflich und kühl. Du merkst, dass mehr dahinterliegt, aber nicht genau was.
+
+[check_bastian_success]
+Du erkennst den wunden Punkt in Bastians Auftreten: Seine Prahlerei soll verdecken, dass er die Gefahr der Höhle kleinredet.
+
+[check_bastian_failure]
+Bastian wirkt laut, sicher und schwer zu greifen. Seine Schwäche zeigt sich dir noch nicht klar genug.
+
+[check_runa_success]
+Du verstehst, warum Runa so ernst bleibt. Die Höhle ist kein Preis auf einem Tisch, sondern ein Ort, an dem falsche Entscheidungen Menschenleben kosten.
+
+[check_runa_failure]
+Runas Fachworte klingen wichtig, aber du kannst nicht sicher einschätzen, welche Gefahr am dringendsten ist.
+
+[check_caelion_success]
+Du erkennst, dass Caelion nicht nur auf alte Rechte pocht. Er versucht zu verhindern, dass ein gebrochener Vertrag zu einem neuen politischen Riss wird.
+
+[check_caelion_failure]
+Caelions Warnung klingt ernst, doch die alte Sprache seiner Verträge bleibt für dich schwer zu deuten.
+
+[check_marik_success]
+Du erkennst an den Siegeln in Mariks Mappe, dass mehrere Ansprüche gleichzeitig gültig sein könnten. Eine einzelne Siegerseite wäre gefährlich.
+
+[check_marik_failure]
+Mariks Mappe bleibt ein Rätsel. Du siehst alte Siegel, aber ihre Bedeutung entzieht sich dir.

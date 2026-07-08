@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import patch
 
 from src.Datatypes.Enums import InputMode
 from src.Datatypes.Models import GameMsgType
@@ -65,7 +66,8 @@ class BallroomSceneTest(unittest.TestCase):
 
     def test_invalid_talk_royal_and_council_choices_stay_in_phase(self) -> None:
         game, _response = enter_ballroom()
-        reach_first_talk(game)
+        with patch("src.Utils.roll_d6", return_value=1):
+            reach_first_talk(game)
 
         talk_response = game.handle_choice("talk:unknown")
         self.assertEqual(choice_ids(talk_response)[0], "talk:alena")
@@ -80,6 +82,63 @@ class BallroomSceneTest(unittest.TestCase):
             choice_ids(council_response),
             ["council:hof", "council:gilde", "council:gesandtschaft", "council:balanced"],
         )
+
+    def test_successful_observation_sets_hint_flag(self) -> None:
+        game, _response = enter_ballroom(attribute="attributes:KNOWLEDGE")
+        game.handle_choice("continue:look_around")
+
+        with patch("src.Utils.roll_d6", return_value=6):
+            response = game.handle_choice("observe:runa")
+
+        self.assertEqual(game.story_flags["hint:runa"], "success")
+        self.assertIn("Probe auf Wissen", response["text"])
+        self.assertIn("Erfolg", response["text"])
+
+    def test_failed_observation_does_not_set_hint_flag(self) -> None:
+        game, _response = enter_ballroom(attribute="attributes:UNDERSTANDING")
+        game.handle_choice("continue:look_around")
+
+        with patch("src.Utils.roll_d6", return_value=1):
+            response = game.handle_choice("observe:marik")
+
+        self.assertNotIn("hint:marik", game.story_flags)
+        self.assertIn("Probe auf Wissen", response["text"])
+        self.assertIn("Nicht genug", response["text"])
+
+    def test_bonus_royal_choice_appears_after_matching_hint(self) -> None:
+        game, _response = enter_ballroom(attribute="attributes:UNDERSTANDING")
+        game.handle_choice("continue:look_around")
+
+        with patch("src.Utils.roll_d6", return_value=6):
+            game.handle_choice("observe:alena")
+        with patch("src.Utils.roll_d6", return_value=1):
+            game.handle_choice("observe:bastian")
+            game.handle_choice("observe:runa")
+        game.handle_choice("continue:first_talk")
+        game.handle_choice("talk:alena")
+
+        royal_response = game.handle_choice("royal:wrong")
+
+        self.assertIn("royal:speak_responsibility", choice_ids(royal_response))
+        self.assertNotIn("royal:accuse_bastian", choice_ids(royal_response))
+
+    def test_bonus_council_choice_appears_after_matching_hint(self) -> None:
+        game, _response = enter_ballroom(attribute="attributes:KNOWLEDGE")
+        game.handle_choice("continue:look_around")
+
+        with patch("src.Utils.roll_d6", return_value=6):
+            game.handle_choice("observe:runa")
+        with patch("src.Utils.roll_d6", return_value=1):
+            game.handle_choice("observe:alena")
+            game.handle_choice("observe:bastian")
+        game.handle_choice("continue:first_talk")
+        game.handle_choice("talk:runa")
+        game.handle_choice("royal:listen")
+
+        council_response = game.handle_choice("council:wrong")
+
+        self.assertIn("council:gilde_safety", choice_ids(council_response))
+        self.assertNotIn("council:balanced_documents", choice_ids(council_response))
 
     def test_valid_council_choice_opens_ending_choice(self) -> None:
         game, _response = enter_ballroom()

@@ -94,6 +94,12 @@ Spieler ein erstes Gespräch beginnen. Danach folgt ein kurzer Auftritt des
 Königspaars, eine Entscheidung im Rat und am Ende die Verkündung der
 Schürfrechte.
 
+Bei jeder Beobachtung findet eine Attributprobe statt. Das Spiel würfelt einen
+W6 und addiert den passenden Attributwert. Wenn das Ergebnis mindestens so hoch
+wie die Schwierigkeit ist, erkennt der Spieler einen zusätzlichen Hinweis.
+Diese Hinweise können später stärkere Auswahlmöglichkeiten vor dem Königspaar
+oder im Rat freischalten.
+
 Die zuerst beobachtete Person wird in `story_flags["first_observed_npc"]`
 gespeichert. Später erinnert sich der Spieler an diese erste Beobachtung.
 Dadurch wirken frühe Hinweise stärker und die Geschichte reagiert sichtbarer
@@ -195,6 +201,45 @@ Reaktionen in Gesprächen unter Druck.
 
 Verständnis steht für Einfühlungsvermögen, das Erkennen von Motiven und das
 Lesen unausgesprochener Absichten.
+
+## Attributproben
+
+Das Spiel nutzt Attributproben, damit die Werte im Ballsaal eine erkennbare
+Bedeutung haben. Eine Probe funktioniert immer gleich:
+
+```text
+W6 + Attributwert >= Schwierigkeit
+```
+
+Der Würfel ist ein normaler sechsseitiger Würfel. Der passende Attributwert
+wird addiert. Bei einem Erfolg erhält der Spieler Zusatzinformationen oder
+eine stärkere Auswahlmöglichkeit. Bei einem Misserfolg geht die Geschichte
+normal weiter. Ein schlechter Wurf beendet das Spiel nicht und blockiert keine
+Pflichtentscheidung.
+
+Die Proben in der Beobachtungsphase sind:
+
+| Beobachtung | Attribut | Schwierigkeit | Erfolg |
+| --- | --- | --- | --- |
+| Alena | Verständnis | 5 | Der Spieler erkennt ihre Sorge vor unumkehrbaren Verträgen. |
+| Bastian | Schlagfertigkeit | 5 | Der Spieler erkennt, wie Bastians Prahlerei angreifbar wird. |
+| Runa | Wissen | 5 | Der Spieler versteht die technische Gefahr der Höhle. |
+| Caelion | Verständnis | 5 | Der Spieler erkennt die diplomatische Gefahr alter Rechte. |
+| Marik | Wissen | 6 | Der Spieler erkennt, dass alte Schriftstücke mehrere Ansprüche stützen können. |
+
+Erfolgreiche Proben setzen interne Hinweise. Diese Hinweise können später neue
+Optionen freischalten:
+
+- Alena: Verantwortung vor der Königin betonen.
+- Bastian: Bastians Übertreibung geschickt offenlegen.
+- Runa: den Gildenpakt mit Sicherheitswissen unterstützen.
+- Caelion: die Gesandtschaft mit alten Rechten unterstützen.
+- Marik: den Kronenpakt mit alten Schriftstücken begründen.
+
+Im Rat wird ebenfalls gewürfelt. Die unterstützte Allianz bleibt die gewählte
+Allianz, aber der Text zeigt, ob die Begründung dem Druck des Rats standhält.
+Normale Ratsentscheidungen haben Schwierigkeit 5. Bonus-Entscheidungen durch
+vorherige Hinweise haben Schwierigkeit 4.
 
 ## Attributverteilung
 

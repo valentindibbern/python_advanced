@@ -1,8 +1,15 @@
-from pathlib import Path
-import re
+from __future__ import annotations
 
-from src.Datatypes.Enums import InputMode
-from src.Datatypes.Models import Choice, PlayerData, GameMsgType, GameResponse
+from pathlib import Path
+import random
+import re
+from typing import TYPE_CHECKING
+
+from src.Datatypes.Enums import Attributes, InputMode
+from src.Datatypes.Models import AttributeCheck, Choice, PlayerData, GameMsgType, GameResponse
+
+if TYPE_CHECKING:
+    from src.Classes.Player import Player
 
 
 TEXT_KEY_PATTERN = re.compile(r"^[A-Za-z0-9_.-]+$")
@@ -49,6 +56,35 @@ def make_response(
 
 def make_choice(choice_id: str, label: str) -> Choice:
     return {"choice_id": choice_id, "label": label}
+
+
+def roll_d6() -> int:
+    return random.randint(1, 6)
+
+
+def make_attribute_check(player: Player, attribute: Attributes, difficulty: int) -> AttributeCheck:
+    roll = roll_d6()
+    attribute_value = player.attributes[attribute]
+    total = roll + attribute_value
+    return {
+        "attribute": attribute,
+        "attribute_label": attribute.get_label(),
+        "difficulty": difficulty,
+        "roll": roll,
+        "attribute_value": attribute_value,
+        "total": total,
+        "success": total >= difficulty,
+    }
+
+
+def format_attribute_check(check: AttributeCheck) -> str:
+    result = "Erfolg" if check["success"] else "Nicht genug"
+    return (
+        f"Probe auf {check['attribute_label']}:\n"
+        f"W6 {check['roll']} + {check['attribute_label']} {check['attribute_value']} "
+        f"= {check['total']} gegen Schwierigkeit {check['difficulty']}.\n"
+        f"{result}."
+    )
 
 
 def load_text_blocks(file_path: Path) -> dict[str, str]:
