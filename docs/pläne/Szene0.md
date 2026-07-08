@@ -6,7 +6,9 @@ Die konkrete Szene liegt in `src/Scenes/scene0/scene.py`.
 ## Zweck
 
 Szene 0 wird direkt angezeigt, wenn das Tkinter-Fenster geladen ist.
-Sie ist noch keine eigentliche Spielhandlung, sondern erklärt kurz den Start.
+Sie ist noch keine eigentliche Spielhandlung, aber sie setzt bereits die
+Stimmung: Schnee vor dem Königshof, Kerzen im Saal und Gerüchte über die
+Kristallhöhle im Nordgrat.
 
 Der Spieler beginnt das Spiel nicht durch Texteingabe oder eine normale
 Choice, sondern über den Button `Start` im Bereich `Spiel` unten rechts.
@@ -44,3 +46,5 @@ Die UI behandelt `Start` und `Stop` als Steuerknöpfe, nicht als Spiel-Choices.
 
 Szene 0 verändert keine Charakterdaten und setzt keine Story-Flags.
 Die eigentliche Spielerstellung beginnt erst in Szene 1.
+Sie erklärt keine Regeln im Detail, sondern macht klar, dass es um Reichtum,
+Verantwortung und politische Gefahr geht.

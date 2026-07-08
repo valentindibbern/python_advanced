@@ -13,17 +13,19 @@ Handlungsszene braucht:
 - Spezies
 - Attributverteilung
 
-Die Szene enthält noch keine eigentliche Handlung. Sie bereitet den `Player`
-für die folgenden Szenen vor.
+Die Szene enthält noch keine eigentliche Handlung im Ballsaal, bindet die
+Auswahl aber bereits erzählerisch ein. Der Spieler erfährt, welches persönliche
+Ziel die Figur verfolgt und warum Spezies und Attribute im höfischen Machtspiel
+wichtig sind.
 
 ## Ablauf
 
 1. `Game.start_game()` startet die Charaktererstellung.
 2. Die Szene fragt nach dem Namen.
 3. Ein leerer Name wird abgelehnt.
-4. Nach einem gültigen Namen folgt die Klassenauswahl.
-5. Nach der Klasse folgt die Speziesauswahl.
-6. Nach der Spezies folgt die Attributverteilung.
+4. Nach einem gültigen Namen folgt die Klassenauswahl mit Motivation.
+5. Nach der Klasse folgt die Speziesauswahl mit politischer Spannung.
+6. Nach der Spezies folgt die Attributverteilung mit kurzer Erklärung.
 7. Die Szene setzt den Schritt auf `DONE`.
 8. `Game` übernimmt den fertigen `Player` und startet Szene 2.
 
@@ -43,11 +45,12 @@ Enum: `CharacterCreationStep`
 
 Die auswählbaren Klassen kommen aus `Class`:
 
-- Aufsteiger
-- Intrigant
-- Netzwerker
+- Aufsteiger: Der eigene Name soll am Hof mehr Gewicht bekommen.
+- Intrigant: Ein Rivale soll geschwächt werden.
+- Netzwerker: Ein richtiger Kontakt soll Türen öffnen.
 
-Die Klasse wird aktuell gespeichert, gibt aber noch keinen Attributbonus.
+Die Klasse wird gespeichert und bestimmt das persönliche Ziel. Sie gibt keinen
+Attributbonus.
 
 ## Spezies
 
@@ -63,6 +66,12 @@ Die Spezies gibt einen Attributbonus:
 - Elf: +1 Verständnis
 - Zwerg: +1 Wissen
 
+Die Auswahltexte zeigen zusätzlich die erzählerische Rolle:
+
+- Menschen sind nahe am Hof, aber in Absprachen verstrickt.
+- Elfen bringen alte Rechte mit, denen der Hof misstraut.
+- Zwerge kennen die Tiefe, werden aber leicht als Werkzeug behandelt.
+
 ## Attributverteilung
 
 Der Spieler wählt ein Hauptattribut:
@@ -70,6 +79,9 @@ Der Spieler wählt ein Hauptattribut:
 - Wissen
 - Schlagfertigkeit
 - Verständnis
+
+Vor der Auswahl erklärt die Szene kurz, wofür die Attribute in Gesprächen,
+Urkunden und politischen Situationen stehen.
 
 Das Hauptattribut erhält 2 Punkte. Die beiden anderen Attribute erhalten je
 1 Punkt. Danach wird der Speziesbonus addiert.

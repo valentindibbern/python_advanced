@@ -37,18 +37,78 @@ def _get_attribute_choices() -> list[Choice]:
     return choices
 
 def _get_species_choices() -> list[Choice]:
+    labels = {
+        Species.HUMAN: "Mensch: nah am Hof, +1 Schlagfertigkeit",
+        Species.ELF: "Elf: alte Rechte, +1 Verständnis",
+        Species.DWARF: "Zwerg: Wissen über die Tiefe, +1 Wissen",
+    }
     return [
-        {"choice_id": f"species:{species.name}", "label": species.get_label()}
+        make_choice(f"species:{species.name}", labels[species])
         for species in Species
         if species is not Species.NOTSET
     ]
 
 def _get_class_choices() -> list[Choice]:
+    labels = {
+        Class.AUFSTEIGER: "Aufsteiger: dein Name soll Gewicht bekommen",
+        Class.INTRIGANT: "Intrigant: ein Rivale soll fallen",
+        Class.NETZWERKER: "Netzwerker: ein Kontakt soll Türen öffnen",
+    }
     return [
-        make_choice(f"class:{player_class.name}", player_class.get_label())
+        make_choice(f"class:{player_class.name}", labels[player_class])
         for player_class in Class
         if player_class is not Class.NOTSET
     ]
+
+def _class_story_text(player_class: Class) -> str:
+    texts = {
+        Class.AUFSTEIGER: (
+            "Du willst nicht länger am Rand der Macht stehen. Wenn deine Seite "
+            "heute Teil der Entscheidung wird, spricht der Hof morgen anders "
+            "über deinen Namen."
+        ),
+        Class.INTRIGANT: (
+            "Jemand im Saal steht zwischen dir und deinem nächsten Schritt. "
+            "Heute Abend muss diese Person an Einfluss verlieren, ohne dass dein "
+            "eigener Name in den Dreck gezogen wird."
+        ),
+        Class.NETZWERKER: (
+            "Du weißt, dass ein einzelnes Gespräch mehr wert sein kann als ein "
+            "alter Titel. Heute suchst du eine Verbindung, die bis zum "
+            "Königspaar reicht."
+        ),
+    }
+    return texts[player_class]
+
+def _species_story_text(species: Species) -> str:
+    texts = {
+        Species.HUMAN: (
+            "Als Mensch kennst du die Sprache des Hofes. Das hilft, aber es "
+            "macht dich auch Teil eines Netzes aus Gefallen, Schuld und "
+            "heimlichen Absprachen."
+        ),
+        Species.ELF: (
+            "Als Elf trägst du alte Erinnerungen in einen Saal, der lieber von "
+            "neuen Rechten spricht. Viele hören dir höflich zu und misstrauen "
+            "dir trotzdem."
+        ),
+        Species.DWARF: (
+            "Als Zwerg weißt du, was Stein verschweigt und was er verzeiht. Der "
+            "Hof braucht dieses Wissen, würde aber gerne selbst darüber "
+            "verfügen."
+        ),
+    }
+    return texts[species]
+
+def _attribute_intro_text() -> str:
+    return (
+        "Wähle nun, worauf du dich verlässt.\n\n"
+        "Wissen hilft bei Urkunden, alten Rechten und dem Wert der Höhle. "
+        "Schlagfertigkeit hilft, wenn der Saal auf eine schnelle Antwort wartet. "
+        "Verständnis hilft, wenn Absichten wichtiger sind als Worte.\n\n"
+        "Dein Hauptattribut erhält 2 Punkte. Die anderen beiden erhalten je "
+        "1 Punkt. Danach kommt der Bonus deiner Spezies dazu."
+    )
 
 def _get_goal_text(player_class: Class, species: Species) -> str:
     if player_class is Class.AUFSTEIGER:
@@ -99,7 +159,10 @@ class CharacterCreationScene(Scene):
     def start(self) -> GameResponse:
         self.step = CharacterCreationStep.NAME
         return make_response(
-            "Wie heisst dein Charakter?",
+            "Die Einladung nennt dich nur Baron. Der Hof wird sich deinen Namen "
+            "erst merken, wenn du heute Abend nützlich, gefährlich oder mutig "
+            "genug wirkst.\n\n"
+            "Wie heißt dein Charakter?",
             input_mode=InputMode.TEXT,
             character=self.player.get_character_data(),
             title="Charaktererstellung",
@@ -126,7 +189,8 @@ class CharacterCreationScene(Scene):
         self.player.name = text
         self.step = CharacterCreationStep.PLAYER_CLASS
         return self._response_for_current_step(
-            f"Dein Charakter heißt {self.name}.\n\nWähle eine Klasse."
+            f"Dein Charakter heißt {self.name}.\n\n"
+            "Wähle, mit welchem Ziel du den Ballsaal betrittst."
         )
 
     def handle_choice(self, choice_id: str) -> GameResponse:
@@ -164,7 +228,9 @@ class CharacterCreationScene(Scene):
         self.player.player_class = self.player_class
         self.step = CharacterCreationStep.SPECIES
         return self._response_for_current_step(
-            f"Du hast die Klasse {self.player_class.get_label()} gewählt.\n\nWähle eine Spezies."
+            f"Du hast die Klasse {self.player_class.get_label()} gewählt.\n\n"
+            f"{_class_story_text(self.player_class)}\n\n"
+            "Wähle nun deine Spezies."
         )
 
     def _handle_species_choice(self, choice_id: str) -> GameResponse:
@@ -185,7 +251,8 @@ class CharacterCreationScene(Scene):
         self.step = CharacterCreationStep.ATTRIBUTES
         return self._response_for_current_step(
             f"Du hast die Spezies {self.species.get_label()} gewählt.\n\n"
-            "Verteile deine 4 Attributpunkte."
+            f"{_species_story_text(self.species)}\n\n"
+            f"{_attribute_intro_text()}"
         )
 
     def _handle_attribute_choice(self, choice_id: str) -> GameResponse:
@@ -212,7 +279,10 @@ class CharacterCreationScene(Scene):
             f"Ziel: {self.player.goal}"
         )
         return make_response(
-            f"Charakter erstellt.\n\n{character_summary}\n\nDu bist bereit für die nächste Szene.",
+            f"Charakter erstellt.\n\n{character_summary}\n\n"
+            "Ein Diener öffnet die Tür zum Ballsaal. Musik, Stimmen und der "
+            "Geruch von Wachs schlagen dir entgegen. Jetzt zählt nicht mehr, "
+            "wer du sein willst, sondern was du aus diesem Abend machst.",
             input_mode=InputMode.NONE,
             character=self.player.get_character_data(),
             title="Charaktererstellung",

@@ -11,9 +11,14 @@ class StartScene(Scene):
 
     def start(self) -> GameResponse:
         return make_response(
-            "Willkommen bei Python Advanced RPG.\n\n"
-            "Drücke unten rechts auf Start, um die Charaktererstellung zu beginnen. "
-            "Mit Stop kannst du das Spiel jederzeit schließen.",
+            "Vor den Fenstern des Königshofs liegt Schnee. Im Saal dahinter "
+            "brennen hundert Kerzen, doch niemand ist nur wegen Musik und Tanz "
+            "gekommen.\n\n"
+            "Im Nordgrat wurde eine Kristallhöhle entdeckt. Wer heute Abend die "
+            "Schürfrechte erhält, gewinnt Einfluss, Geld und vielleicht eine "
+            "Schuld, die noch niemand bezahlen will.\n\n"
+            "Drücke unten rechts auf Start, um deine Figur zu erstellen. Mit "
+            "Stop kannst du das Spiel jederzeit schließen.",
             input_mode=InputMode.NONE,
             character=self.player.get_character_data(),
             title="Start",

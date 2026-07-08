@@ -6,7 +6,9 @@ Schnupperpraktikum bei RAFISA.
 Das Projekt ist ein kleines textbasiertes Rollenspiel mit einer grafischen
 Oberfläche in Tkinter. Nach einem kurzen Startbildschirm erstellt der Spieler
 eine Figur und betritt danach einen königlichen Ballsaal, in dem über eine neu
-entdeckte Höhle und das Schürfrecht verhandelt wird.
+entdeckte Höhle und das Schürfrecht verhandelt wird. Die Höhle ist nicht nur
+wertvoll, sondern auch politisch gefährlich: Alte Rechte, Gier und
+Verantwortung prallen an einem Abend aufeinander.
 
 ## Start
 
@@ -42,6 +44,8 @@ Im Ballsaal kann der Spieler wichtige Personen beobachten, ein wichtiges
 Gespräch führen, vor dem Königspaar reagieren und im Rat eine Allianz
 unterstützen. Am Ende des Abends wird verkündet, wer die Schürfrechte erhält.
 Erst dann erfährt der Spieler, ob das persönliche Ziel erreicht wurde.
+Die erste Beobachtung wird später noch einmal aufgegriffen, damit frühe
+Hinweise erzählerisch spürbar bleiben.
 
 ## Umgesetzte Anforderungen
 
@@ -78,6 +82,10 @@ Spezies:
 - Mensch
 - Elf
 - Zwerg
+
+Im Code und in der Oberfläche wird der Begriff `Spezies` verwendet. Er erfüllt
+die Auswahl aus der Aufgabenstellung und passt besser zur Fantasy-Welt des
+Spiels.
 
 Attribute:
 
