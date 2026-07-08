@@ -15,7 +15,6 @@ class UiMsgType(Enum):
     START = "start"
     TEXT = "text"
     CHOICE = "choice"
-    RESTART = "restart"
 
 
 class Choice(TypedDict):

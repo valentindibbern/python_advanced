@@ -49,6 +49,38 @@ ALLIANCE_LABELS: dict[str, str] = {
     "balanced": "gemeinsamer Kronenpakt",
 }
 
+OBSERVATION_CHOICE_IDS: list[str] = [
+    "observe:alena",
+    "observe:bastian",
+    "observe:runa",
+    "observe:caelion",
+    "observe:marik",
+]
+
+TALK_TARGETS: dict[str, tuple[str, str]] = {
+    "talk:alena": ("alena", "hof"),
+    "talk:bastian": ("bastian", "hof"),
+    "talk:runa": ("runa", "gilde"),
+    "talk:caelion": ("caelion", "gesandtschaft"),
+    "talk:marik": ("marik", "balanced"),
+}
+
+NPC_SPECIES: dict[str, Species] = {
+    "alena": Species.HUMAN,
+    "bastian": Species.HUMAN,
+    "runa": Species.DWARF,
+    "caelion": Species.ELF,
+    "marik": Species.HUMAN,
+}
+
+ROYAL_CHOICE_IDS: tuple[str, ...] = ("royal:speak", "royal:listen", "royal:accuse")
+COUNCIL_CHOICE_IDS: tuple[str, ...] = (
+    "council:hof",
+    "council:gilde",
+    "council:gesandtschaft",
+    "council:balanced",
+)
+
 TEXT_DIR = Path(__file__).parent / "texts"
 SYSTEM_TEXT_SOURCE = "scene2/system.txt"
 SYSTEM_TEXTS = load_text_blocks(TEXT_DIR / "system.txt")
@@ -292,19 +324,12 @@ class BallroomArrivalScene(Scene):
         )
 
     def _handle_talk(self, choice_id: str) -> GameResponse:
-        talk_targets = {
-            "talk:alena": ("alena", "hof"),
-            "talk:bastian": ("bastian", "hof"),
-            "talk:runa": ("runa", "gilde"),
-            "talk:caelion": ("caelion", "gesandtschaft"),
-            "talk:marik": ("marik", "balanced"),
-        }
-        if choice_id not in talk_targets:
+        if choice_id not in TALK_TARGETS:
             return self._response_for_current_step(
                 get_text(SYSTEM_TEXTS, "invalid_talk", SYSTEM_TEXT_SOURCE)
             )
 
-        npc_id, alliance = talk_targets[choice_id]
+        npc_id, alliance = TALK_TARGETS[choice_id]
         self.talked_to = npc_id
         self.supported_alliance = alliance
         self._update_goal_status_after_talk(npc_id, alliance)
@@ -322,7 +347,7 @@ class BallroomArrivalScene(Scene):
         )
 
     def _handle_royal_intermezzo(self, choice_id: str) -> GameResponse:
-        if choice_id not in ("royal:speak", "royal:listen", "royal:accuse"):
+        if choice_id not in ROYAL_CHOICE_IDS:
             return self._response_for_current_step(
                 get_text(SYSTEM_TEXTS, "invalid_choice", SYSTEM_TEXT_SOURCE)
             )
@@ -356,7 +381,7 @@ class BallroomArrivalScene(Scene):
         )
 
     def _handle_council(self, choice_id: str) -> GameResponse:
-        if choice_id not in ("council:hof", "council:gilde", "council:gesandtschaft", "council:balanced"):
+        if choice_id not in COUNCIL_CHOICE_IDS:
             return self._response_for_current_step(
                 get_text(SYSTEM_TEXTS, "invalid_council", SYSTEM_TEXT_SOURCE)
             )
@@ -442,7 +467,7 @@ class BallroomArrivalScene(Scene):
         )
 
     def _observation_choice_ids(self) -> list[str]:
-        return ["observe:alena", "observe:bastian", "observe:runa", "observe:caelion", "observe:marik"]
+        return OBSERVATION_CHOICE_IDS
 
     def _observation_choices(self) -> list[Choice]:
         labels = {
@@ -512,13 +537,7 @@ class BallroomArrivalScene(Scene):
                 )
 
         if self.player.player_class is Class.NETZWERKER:
-            npc_species = {
-                "alena": Species.HUMAN,
-                "bastian": Species.HUMAN,
-                "runa": Species.DWARF,
-                "caelion": Species.ELF,
-                "marik": Species.HUMAN,
-            }[npc_id]
+            npc_species = NPC_SPECIES[npc_id]
             if npc_species in _network_target_species(self.player.species):
                 self.network_contact = True
                 self.player.goal_status = self._status_text(

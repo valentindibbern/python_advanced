@@ -8,16 +8,16 @@ class Scene:
         self.player: Player = player
 
     def start(self) -> GameResponse:
-        ...
+        raise NotImplementedError("Szenen müssen start() implementieren.")
 
     def handle_text_input(self, text: str) -> GameResponse:
-        ...
+        raise NotImplementedError("Szenen müssen handle_text_input() implementieren.")
 
     def handle_choice(self, choice_id: str) -> GameResponse:
-        ...
+        raise NotImplementedError("Szenen müssen handle_choice() implementieren.")
 
     def is_done(self) -> bool:
-        ...
+        raise NotImplementedError("Szenen müssen is_done() implementieren.")
 
     def get_player(self) -> Player:
-        ...
+        raise NotImplementedError("Szenen müssen get_player() implementieren.")

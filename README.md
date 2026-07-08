@@ -27,6 +27,17 @@ python main.py
 und startet die Anwendung mit `Ui.run()`. Im Fenster beginnt das Spiel über
 den Button `Start`. Der Button `Stop` schließt das Fenster.
 
+Tests ausführen:
+
+```cmd
+python -m unittest discover -v
+```
+
+Die Tests prüfen ohne Zusatzpakete vor allem Spiellogik, Charaktererstellung,
+Attributboni, Szenenübergänge, Zielauswertung, Textdateien und einfache
+UI-Formatierung. Das Tkinter-Fenster wird weiterhin manuell mit `python
+main.py` geprüft.
+
 ## Aktueller Spielstand
 
 Der aktuelle Code enthält drei Abschnitte:
@@ -116,6 +127,7 @@ python_advanced/
 │   ├── Classes/         Game, UI, Player und Szenen-Basisklasse
 │   ├── Datatypes/       Enums und TypedDict-Modelle
 │   └── Scenes/          konkrete Szenen mit Textdateien
+├── tests/               unittest-Tests für Spiellogik und Hilfsfunktionen
 ├── main.py              Startpunkt
 ├── pyproject.toml       Projektmetadaten
 └── README.md
@@ -143,6 +155,10 @@ Pfade und benötigte Text-Keys sind im jeweiligen Szenenmodul fest eingetragen.
 Die GUI sendet Eingaben als `UiResponse` an das Spiel. Das Spiel antwortet mit
 einer `GameResponse`. Diese Antwort enthält den Text, den Eingabemodus,
 mögliche Auswahloptionen und die aktuellen Charakterdaten.
+
+Die Szenen-Basisklasse definiert die Methoden, die konkrete Szenen anbieten
+müssen. Unvollständige Szenen lösen bewusst `NotImplementedError` aus, damit
+fehlende Implementierungen nicht still als `None` weiterlaufen.
 
 ## Textdateien
 

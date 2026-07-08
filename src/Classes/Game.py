@@ -82,7 +82,6 @@ class Game:
     def _save_scene_progress(self, response: GameResponse, answer_id: str) -> GameResponse:
         if self.current_scene.is_done():
             self.player = self.current_scene.get_player()
-            self.state = State.SCENE_COMPLETE
             return self._start_next_scene(answer_id, response)
 
         return self._prepare_response(response, answer_id)
