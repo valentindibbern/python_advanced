@@ -1,5 +1,11 @@
+from pathlib import Path
+import re
+
 from src.Datatypes.Enums import InputMode
 from src.Datatypes.Models import Choice, PlayerData, GameMsgType, GameResponse
+
+
+TEXT_KEY_PATTERN = re.compile(r"^[A-Za-z0-9_.-]+$")
 
 
 def get_empty_player_data() -> PlayerData:
@@ -43,3 +49,81 @@ def make_response(
 
 def make_choice(choice_id: str, label: str) -> Choice:
     return {"choice_id": choice_id, "label": label}
+
+
+def load_text_blocks(file_path: Path) -> dict[str, str]:
+    if not file_path.exists():
+        raise FileNotFoundError(f"Textdatei nicht gefunden: {file_path}")
+    if not file_path.is_file():
+        raise ValueError(f"Textpfad ist keine Datei: {file_path}")
+
+    texts: dict[str, str] = {}
+    current_key = ""
+    current_lines: list[str] = []
+
+    for line_number, line in enumerate(file_path.read_text(encoding="utf-8").splitlines(), start=1):
+        stripped_line = line.strip()
+        is_header = stripped_line.startswith("[") and stripped_line.endswith("]")
+
+        if stripped_line.startswith("[") or stripped_line.endswith("]"):
+            if not is_header:
+                raise ValueError(
+                    f"Ungültiger Textblock-Header in {file_path} Zeile {line_number}: {line}"
+                )
+
+        if is_header:
+            if current_key != "":
+                texts[current_key] = "\n".join(current_lines).strip()
+
+            current_key = stripped_line[1:-1].strip()
+            current_lines = []
+
+            if current_key == "":
+                raise ValueError(f"Leerer Textblock-Key in {file_path} Zeile {line_number}")
+            if not TEXT_KEY_PATTERN.match(current_key):
+                raise ValueError(
+                    f"Ungültiger Textblock-Key in {file_path} Zeile {line_number}: {current_key}"
+                )
+            if current_key in texts:
+                raise ValueError(
+                    f"Doppelter Textblock-Key '{current_key}' in {file_path} Zeile {line_number}"
+                )
+            continue
+
+        if current_key == "" and stripped_line != "":
+            raise ValueError(f"Text vor dem ersten Textblock in {file_path} Zeile {line_number}")
+
+        if current_key != "":
+            current_lines.append(line)
+
+    if current_key != "":
+        texts[current_key] = "\n".join(current_lines).strip()
+
+    return texts
+
+
+def get_text(texts: dict[str, str], key: str, source: str = "") -> str:
+    try:
+        return texts[key]
+    except KeyError as error:
+        source_text = f" in {source}" if source else ""
+        raise KeyError(f"Fehlender Textblock '{key}'{source_text}") from error
+
+
+def format_text(texts: dict[str, str], key: str, source: str = "", **values: object) -> str:
+    text = get_text(texts, key, source)
+    try:
+        return text.format(**values)
+    except KeyError as error:
+        missing_key = str(error).strip("'")
+        source_text = f" aus {source}" if source else ""
+        raise KeyError(
+            f"Fehlender Platzhalter '{missing_key}' in Textblock '{key}'{source_text}"
+        ) from error
+
+
+def require_text_keys(texts: dict[str, str], required_keys: list[str], source: str) -> None:
+    missing_keys = [key for key in required_keys if key not in texts]
+    if missing_keys:
+        missing_text = ", ".join(missing_keys)
+        raise KeyError(f"Fehlende Textblöcke in {source}: {missing_text}")

@@ -1,0 +1,12 @@
+[observe]
+Runa zeigt einer kleinen Gruppe eine Erzprobe. "Das ist kein gewöhnlicher Stein. Wer dort falsch sprengt, bringt den halben Hang zum Rutschen." Dann klappt sie ihr Notizbuch zu.
+
+Eine junge Dienerin neben ihr wird blass, als Runa von Wasseradern spricht. Du erkennst: Runa lässt sich durch Höflichkeit gewinnen, aber nicht durch leere Versprechen.
+
+[memory]
+Du erinnerst dich an Runas Warnung vor Wasseradern. In diesem Streit geht es nicht nur um Besitz, sondern um Menschen, die später in die Tiefe steigen müssen.
+
+[talk]
+Runa legt die Erzprobe in deine Hand. Sie ist schwerer, als sie aussieht. "Wer über Schürfrechte spricht, soll wissen, was ein gebrochener Stollen kostet", sagt sie.
+
+Als du nach Arbeitern, Wasser und Karten fragst, wird ihre Stimme wärmer. Sie merkt, dass du ihr Handwerk ernst nimmst. Dann sagt sie leise: "Die Höhle wird nicht warten, bis der Hof fertig gestritten hat."

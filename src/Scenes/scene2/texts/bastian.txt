@@ -1,0 +1,12 @@
+[observe]
+Bastian hebt seinen Becher und erzählt so laut, dass auch entfernte Gäste zuhören. "Der Nordgrat schläft seit Jahrhunderten. Ich sage: Wecken wir ihn auf. Wer jetzt zögert, wird morgen um Arbeit betteln."
+
+Mehrere junge Adelige lachen. Runa Steinhand verzieht keine Miene. Caelion merkt sich jedes Wort. Bastian merkt ebenfalls, wer nicht lacht.
+
+[memory]
+Du erinnerst dich daran, wie Bastian auch die Gäste zählte, die nicht lachten. Wer ihn bremst, wird für ihn schnell zum Gegner.
+
+[talk]
+Bastian schlägt dir freundschaftlich auf die Schulter, etwas zu fest. "Endlich jemand, der nicht nur flüstert. Die Höhle wird reich machen, wer den Mut hat, zuerst hineinzugehen."
+
+Sein Lachen klingt offen, aber seine Augen prüfen, ob du nützlich oder gefährlich bist. Als du nicht sofort zustimmst, wird sein Lächeln eine Spur schmaler.

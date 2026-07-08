@@ -3,6 +3,53 @@
 Dieses Register beschreibt die Begriffe, Szenen, Figuren und Choice-IDs, die
 im aktuellen Code verwendet werden.
 
+## Textdateien
+
+Sichtbare Szeneninhalte werden aus festen `.txt`-Dateien geladen. Die
+Ladefunktionen stehen in `src/Utils.py`:
+
+- `load_text_blocks()`
+- `get_text()`
+- `format_text()`
+- `require_text_keys()`
+
+Das Format besteht aus Blöcken:
+
+```text
+[key]
+Text über mehrere Zeilen.
+```
+
+Wichtige Regeln:
+
+- Textdateien sind UTF-8.
+- Keys dürfen nicht doppelt vorkommen.
+- Benötigte Keys werden beim Laden geprüft.
+- Platzhalter wie `{name}` werden im Code gefüllt.
+- Es gibt keine dynamische Registrierung. Neue Dateien und Keys müssen im Code
+  fest eingetragen werden.
+
+Dateien:
+
+- `src/Scenes/scene0/texts/system.txt`: Startbildschirm
+- `src/Scenes/scene1/texts/system.txt`: allgemeine Charaktererstellung
+- `src/Scenes/scene1/texts/class_*.txt`: Klassenauswahl und Klassentexte
+- `src/Scenes/scene1/texts/species_*.txt`: Speziesauswahl und Speziestexte
+- `src/Scenes/scene2/texts/system.txt`: Ballsaal, Übergänge, Choices,
+  Fehlermeldungen, Rat und Ende
+- `src/Scenes/scene2/texts/alena.txt`: Beobachtung, Erinnerung und Gespräch
+  zu Alena
+- `src/Scenes/scene2/texts/bastian.txt`: Beobachtung, Erinnerung und Gespräch
+  zu Bastian
+- `src/Scenes/scene2/texts/runa.txt`: Beobachtung, Erinnerung und Gespräch
+  zu Runa
+- `src/Scenes/scene2/texts/caelion.txt`: Beobachtung, Erinnerung und Gespräch
+  zu Caelion
+- `src/Scenes/scene2/texts/marik.txt`: Beobachtung, Erinnerung und Gespräch
+  zu Marik
+- `src/Scenes/scene2/texts/queen.txt`: Notiz zu Königin Meridia
+- `src/Scenes/scene2/texts/king.txt`: Notiz zu König Arwed
+
 ## Charakterdaten
 
 Die Charakterdaten werden in der UI im Bereich `Charakter` angezeigt.

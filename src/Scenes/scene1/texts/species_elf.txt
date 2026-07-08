@@ -1,0 +1,5 @@
+[choice_label]
+Elf: alte Rechte, +1 Verständnis
+
+[story]
+Als Elf trägst du alte Erinnerungen in einen Saal, der lieber von neuen Rechten spricht. Viele hören dir höflich zu und misstrauen dir trotzdem.

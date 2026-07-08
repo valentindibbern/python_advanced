@@ -1,0 +1,12 @@
+[observe]
+Marik Voss sortiert seine Schriftrollen immer wieder neu. Als Bastians Name fällt, legt er eine rote Schnur um eine Urkunde. Als Runa vorbeigeht, schiebt er eine zweite Rolle nach vorn.
+
+Du bist sicher: Marik weiß, dass die Entscheidung komplizierter ist, als der Hof offiziell zugibt. Und du bist nicht sicher, ob er diese Wahrheit freiwillig sagen darf.
+
+[memory]
+Du erinnerst dich an Mariks zitternde Hände. Irgendetwas in seiner Mappe ist gefährlich genug, dass alle Seiten es kontrollieren wollen.
+
+[talk]
+Marik wirkt erleichtert, als du nicht sofort eine Forderung stellst. "Alle wollen wissen, was in meinen Rollen steht", murmelt er. "Kaum jemand fragt, warum der König sie heute erst zeigen lässt."
+
+Er verrät dir, dass keine Partei allein einen sauberen Anspruch hat. Das macht einen gemeinsamen Pakt möglich. Als er das sagt, blickt er zur Treppe, als fürchte er, schon zu viel gesagt zu haben.

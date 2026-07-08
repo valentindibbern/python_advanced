@@ -1,8 +1,17 @@
+from pathlib import Path
+
 from src.Utils import make_response
+from src.Utils import get_text, load_text_blocks, require_text_keys
 from src.Classes.Player import Player
 from src.Classes.Scene import Scene
 from src.Datatypes.Enums import InputMode
 from src.Datatypes.Models import GameMsgType, GameResponse
+
+
+TEXT_SOURCE = "scene0/system.txt"
+TEXT_DIR = Path(__file__).parent / "texts"
+SYSTEM_TEXTS = load_text_blocks(TEXT_DIR / "system.txt")
+require_text_keys(SYSTEM_TEXTS, ["start"], TEXT_SOURCE)
 
 
 class StartScene(Scene):
@@ -11,14 +20,7 @@ class StartScene(Scene):
 
     def start(self) -> GameResponse:
         return make_response(
-            "Vor den Fenstern des Königshofs liegt Schnee. Im Saal dahinter "
-            "brennen hundert Kerzen, doch niemand ist nur wegen Musik und Tanz "
-            "gekommen.\n\n"
-            "Im Nordgrat wurde eine Kristallhöhle entdeckt. Wer heute Abend die "
-            "Schürfrechte erhält, gewinnt Einfluss, Geld und vielleicht eine "
-            "Schuld, die noch niemand bezahlen will.\n\n"
-            "Drücke unten rechts auf Start, um deine Figur zu erstellen. Mit "
-            "Stop kannst du das Spiel jederzeit schließen.",
+            get_text(SYSTEM_TEXTS, "start", TEXT_SOURCE),
             input_mode=InputMode.NONE,
             character=self.player.get_character_data(),
             title="Start",

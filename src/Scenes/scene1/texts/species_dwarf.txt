@@ -1,0 +1,5 @@
+[choice_label]
+Zwerg: Wissen über die Tiefe, +1 Wissen
+
+[story]
+Als Zwerg weißt du, was Stein verschweigt und was er verzeiht. Der Hof braucht dieses Wissen, würde aber gerne selbst darüber verfügen.

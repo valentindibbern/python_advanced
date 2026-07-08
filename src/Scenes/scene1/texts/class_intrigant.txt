@@ -1,0 +1,5 @@
+[choice_label]
+Intrigant: ein Rivale soll fallen
+
+[story]
+Jemand im Saal steht zwischen dir und deinem nächsten Schritt. Heute Abend muss diese Person an Einfluss verlieren, ohne dass dein eigener Name in den Dreck gezogen wird.

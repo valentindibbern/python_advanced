@@ -1,0 +1,195 @@
+[arrival]
+Das schwere Tor zum Königshof öffnet sich. Hinter dir bleibt die kalte Nacht, vor dir liegt der Saal voller Licht, Musik und berechnender Blicke.
+
+Ein Herold schlägt mit seinem Stab auf den Boden. "{title} {name} ist eingetroffen!"
+
+Heute geht es nicht nur um Tanz. Die Kristallhöhle im Nordgrat wurde entdeckt, und das Königspaar will am Ende des Abends verkünden, welche Allianz die Schürfrechte erhält. Manche Gäste reden von Reichtum. Andere reden leiser, wenn sie von der Tiefe sprechen.
+
+Dein persönliches Ziel bleibt bis dahin im Hintergrund. Erst wenn die Kerzen heruntergebrannt sind, zeigt sich, ob du erfolgreich warst.
+
+[choice_look_around]
+Die wichtigsten Gäste beobachten
+
+[done]
+Der Abend ist abgeschlossen.
+
+[invalid_choice]
+Diese Auswahl ist hier nicht möglich.
+
+[overview]
+Du lässt deinen Blick durch den Ballsaal wandern. Der Hof hat die Feier nicht aus Freundlichkeit ausgerichtet. Heute Abend wird entschieden, wer die neu entdeckte Kristallhöhle im Nordgrat erschließen darf. Unter den Gesprächen liegt eine zweite Frage: Wer trägt die Schuld, wenn die Tiefe gefährlicher ist als versprochen?
+
+Herzogin Alena von Falkenruh spricht für den alten Menschenadel. Sie will die Schürfrechte unter königlicher Aufsicht halten und fürchtet, dass eine zu starke Gilde den Hof erpressbar macht. Noch mehr fürchtet sie einen Vertrag, den der Hof später nicht mehr brechen kann.
+
+Graf Bastian von Eisenmark lächelt breit, doch seine Worte sind scharf. Er will schnelle Verträge, schnelle Wagen und schnelle Gewinne. Wer ihm im Weg steht, wird öffentlich als Feigling dargestellt. Für ihn ist Zögern fast schon Verrat.
+
+Meisterin Runa Steinhand vertritt die zwergische Gilde. Sie spricht von Stützbalken, Wasseradern und Arbeiterrechten. Ohne ihre Leute kommt niemand tief genug in die Höhle. Sie wirkt, als hätte sie schon etwas gesehen, das andere lieber überhören.
+
+Lord Caelion Silberblatt führt die elfische Gesandtschaft. Er warnt, dass die Höhle in alten Grenzverträgen erwähnt wird. Für ihn ist sie nicht nur Erz, sondern ein politisches Versprechen, das die Krone vielleicht vergessen wollte.
+
+Hofsekretär Marik Voss trägt die alten Urkunden des Reiches. Er wirkt unscheinbar, aber jede Partei versucht herauszufinden, welche Rolle in seiner Mappe den Ausschlag geben könnte. Seine Hände zittern nur dann, wenn jemand die ältesten Siegel erwähnt.
+
+[first_talk_start]
+Nachdem du genug gesehen hast, wird der Saal enger. Diener bringen kleine Gläser mit Gewürzwein. Die Musik wird leiser, damit die Gäste einander besser belauern können.
+
+{memory_text}
+
+Jetzt musst du entscheiden, mit wem du wirklich sprichst. Dieses Gespräch kann später beeinflussen, welche Allianz stark genug wird und ob dein eigenes Ziel greifbar bleibt.
+
+[invalid_observation]
+Diese Person kannst du gerade nicht auswählen.
+
+[already_observed]
+Diese Person hast du schon beobachtet.
+
+[observation_done_hint]
+Du hast genug Hinweise gesammelt, um ein erstes Gespräch zu wagen. Du kannst noch weiter beobachten oder dich direkt unter die entscheidenden Gäste mischen.
+
+[invalid_talk]
+Diese Gesprächspartnerin oder diesen Gesprächspartner gibt es hier nicht.
+
+[talk_royal_transition]
+Ein Gong unterbricht die Gespräche. Königin Meridia tritt auf die oberste Stufe der Marmortreppe. Neben ihr steht König Arwed, blass und aufmerksam. Die Königin hebt die Hand, und selbst Bastian verstummt.
+
+"Viele von Euch sprechen heute von Rechten", sagt Meridia. "Ich will wissen, wer auch von Verantwortung spricht. Vor der letzten Beratung höre ich genau eine Stimme aus dem Saal."
+
+[royal_speak]
+Du trittst vor und sprichst die Königin direkt an. Du formulierst keine Forderung, sondern bietest eine Beobachtung an: Die Höhle braucht mehr als Besitzansprüche. Sie braucht Vertrauen zwischen den Leuten, die dort arbeiten, und denen, die darüber regieren.
+
+{memory_text}
+
+Meridia sieht dich lange an. Dann sagt sie: "Eine seltene Antwort an einem Abend voller Hunger."
+
+[royal_accuse]
+Du nutzt den Moment für einen Angriff. Du erwähnst Widersprüche in den Aussagen deines Rivalen und zwingst Marik, eine passende Urkunde vorzulesen. Der Saal wird still.
+
+{memory_text}
+
+Die betroffene Partei verliert sichtbar an Gewicht. Niemand wird aus dem Saal geworfen, aber einige Türen schließen sich leise.
+
+[royal_listen]
+Du bleibst am Rand und hörst zu. Die Königin fragt nicht nach Schmeichelei, sondern nach Folgen: Wer trägt Verantwortung, wenn die erste Mine einstürzt? Wer ersetzt zerstörte Quellen? Wer spricht für Arbeiter, Händler und Grenzorte?
+
+{memory_text}
+
+Deine Zurückhaltung verschafft dir kein Gespräch mit dem Königspaar, aber du lernst, welche Argumente im Rat zählen.
+
+[council_transition]
+Danach öffnen sich die Türen zum kleinen Ratssaal. Nicht alle Gäste dürfen hinein, aber deine Einladung reicht. Drinnen warten keine Tänze mehr, nur Tinte, Siegel und Menschen, die einander mit leiser Stimme drohen.
+
+[invalid_council]
+Diese Ratsentscheidung ist nicht möglich.
+
+[council_balanced]
+Du schlägst einen Kronenpakt vor: Die Krone hält das letzte Siegel, die Gilde leitet die Arbeit, die Gesandtschaft prüft alte Grenzen und der Hof wacht über Steuern und Sicherheit.
+
+Der Vorschlag ist unbequem, weil niemand alles bekommt. Gerade deshalb wird es still. Alena hasst die geteilte Kontrolle, Bastian hasst die Verzögerung, Runa hasst die höfischen Worte, und Caelion hasst, dass er trotzdem zuhören muss.
+
+[council_default]
+Du stellst dich im Rat deutlich hinter die {alliance_label}. Deine Worte werden nicht allein entscheiden, aber sie geben einer Seite genau in dem Moment Gewicht, in dem Marik die alten Ansprüche vorliest.
+
+Es wird gestritten, gezählt, verbessert und gedroht. Marik liest eine Zeile zweimal, weil beim ersten Mal zu viele Gäste gleichzeitig widersprechen. Am Ende erkennt man an den Gesichtern, wohin sich die Entscheidung neigt.
+
+[council_after]
+Die Beratung dauert länger, als alle erwartet haben. Einmal fällt ein Glas um, und niemand lacht. Als die Türen wieder aufgehen, sind die Kerzen kurz vor dem Erlöschen. Der Ball ist fast vorbei, aber die Verkündung steht noch aus.
+
+[choice_ending]
+Die Verkündung anhören
+
+[ending]
+König Arwed erhebt sich. "Die Schürfrechte gehen an die {alliance_label}. Keine Seite erhält alles, aber eine Seite trägt ab morgen die Verantwortung. Und wer Verantwortung trägt, kann sich nicht mehr hinter Gerüchten verstecken."
+
+Im Saal brechen Gespräche los. Alena prüft sofort die Formulierungen des Vertrags. Bastian lächelt nur noch mit den Zähnen. Runa fragt nach Karten und Arbeitern. Caelion lässt sich jedes Siegel zeigen. Marik wirkt zum ersten Mal an diesem Abend erleichtert.
+
+{result}
+
+Zielstatus: {goal_status}
+
+Der Abend endet nicht mit einem Kampf, sondern mit Unterschriften, verletztem Stolz und neuen Bündnissen. Als du den Hof verlässt, liegt der Nordgrat noch immer dunkel am Horizont. Die Höhle ist nicht weniger gefährlich geworden. Nur die Namen der Menschen, die sich ihr stellen müssen, stehen nun fest.
+
+[status_prefix]
+Zwischenstand: {text}
+
+[status_royal_contact]
+Du hast mit Königin Meridia gesprochen.
+
+[status_aufsteiger_contact]
+Du hast Kontakt zu deiner Spezies-Allianz.
+
+[status_aufsteiger_missing]
+Du hast noch keinen sicheren Platz in deiner Spezies-Allianz.
+
+[status_netzwerker_contact]
+Du hast eine passende neue Bekanntschaft geknüpft.
+
+[ending_aufsteiger_success]
+Du warst erfolgreich. Dein Name wird morgen nicht in den großen Verträgen stehen, aber er wird in den richtigen Gesprächen fallen.
+
+[ending_aufsteiger_failure]
+Du hast dein Ziel nicht erreicht. Als die Sieger einander zunicken, merkst du, dass dein Platz am Rand des Saals noch nicht verschwunden ist.
+
+[ending_intrigant_success]
+Du warst erfolgreich. Dein Rivale verlässt den Saal mit gesenkter Stimme. Niemand nennt dich als Ursache, und genau das macht deinen Sieg wertvoll.
+
+[ending_intrigant_failure]
+Du hast dein Ziel nicht erreicht. Dein Rivale bleibt im Spiel und lächelt, als hätte er den Abend besser verstanden als du.
+
+[ending_netzwerker_success]
+Du warst erfolgreich. Die neue Verbindung ist noch kein Bündnis, aber sie hat dir einen Weg zum Königspaar geöffnet.
+
+[ending_netzwerker_failure]
+Du hast dein Ziel nicht erreicht. Du hast Stimmen gehört und Namen gesammelt, doch keine Verbindung wurde stark genug, um eine Tür zu öffnen.
+
+[choice_observe_alena]
+Herzogin Alena beobachten
+
+[choice_observe_bastian]
+Graf Bastian beobachten
+
+[choice_observe_runa]
+Meisterin Runa beobachten
+
+[choice_observe_caelion]
+Lord Caelion beobachten
+
+[choice_observe_marik]
+Hofsekretär Marik beobachten
+
+[choice_first_talk]
+Ein Gespräch beginnen
+
+[choice_talk_alena]
+Mit Herzogin Alena sprechen
+
+[choice_talk_bastian]
+Mit Graf Bastian sprechen
+
+[choice_talk_runa]
+Mit Meisterin Runa sprechen
+
+[choice_talk_caelion]
+Mit Lord Caelion sprechen
+
+[choice_talk_marik]
+Mit Hofsekretär Marik sprechen
+
+[choice_royal_speak]
+Selbst vor der Königin sprechen
+
+[choice_royal_listen]
+Zuhören und Informationen sammeln
+
+[choice_royal_accuse]
+Den Rivalen öffentlich schwächen
+
+[choice_council_hof]
+Die königliche Hofallianz unterstützen
+
+[choice_council_gilde]
+Den Gildenpakt unterstützen
+
+[choice_council_gesandtschaft]
+Die elfische Gesandtschaft unterstützen
+
+[choice_council_balanced]
+Einen gemeinsamen Kronenpakt vorschlagen

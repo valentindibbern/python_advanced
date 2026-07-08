@@ -1,0 +1,12 @@
+[observe]
+Caelion spricht mit einem Sänger, als ginge es um Musik. Doch seine Fragen handeln von alten Wegen, verbotenen Quellen und Namen, die seit Jahren niemand mehr ausspricht.
+
+Er sagt leise: "Manchmal ist eine Grenze nicht auf einer Karte, sondern in einer Erinnerung." Als er das sagt, blickt er kurz zu Mariks Mappe.
+
+[memory]
+Du erinnerst dich an Caelions Blick zu Mariks Mappe. Alte Verträge sind heute Abend keine Fußnote, sondern eine Waffe.
+
+[talk]
+Caelion begrüßt dich mit einer knappen Verbeugung. "Der Hof nennt die Höhle neu, weil er sie neu gefunden hat. Das ist nicht dasselbe."
+
+Er erzählt von einem alten Grenzbaum, von einem verschwundenen Siegel und von Liedern, die nur noch ältere Elfen kennen. Seine Stimme bleibt ruhig, aber seine Worte stellen den ganzen Abend auf unsicheren Boden.

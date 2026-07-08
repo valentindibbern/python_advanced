@@ -1,0 +1,5 @@
+[choice_label]
+Netzwerker: ein Kontakt soll Türen öffnen
+
+[story]
+Du weißt, dass ein einzelnes Gespräch mehr wert sein kann als ein alter Titel. Heute suchst du eine Verbindung, die bis zum Königspaar reicht.

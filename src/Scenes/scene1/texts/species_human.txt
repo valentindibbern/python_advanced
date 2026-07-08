@@ -1,0 +1,5 @@
+[choice_label]
+Mensch: nah am Hof, +1 Schlagfertigkeit
+
+[story]
+Als Mensch kennst du die Sprache des Hofes. Das hilft, aber es macht dich auch Teil eines Netzes aus Gefallen, Schuld und heimlichen Absprachen.

@@ -65,6 +65,7 @@ Hinweise erzählerisch spürbar bleiben.
 - Zielstatus in der rechten Sidebar
 - klares Ende mit Auswertung
 - einfache Fehlerbehandlung bei leeren oder ungültigen Eingaben
+- Szeneninhalte werden aus festen `.txt`-Dateien geladen
 
 ## Klassen, Spezies und Attribute
 
@@ -114,7 +115,7 @@ python_advanced/
 ├── src/
 │   ├── Classes/         Game, UI, Player und Szenen-Basisklasse
 │   ├── Datatypes/       Enums und TypedDict-Modelle
-│   └── Scenes/          konkrete Szenen
+│   └── Scenes/          konkrete Szenen mit Textdateien
 ├── main.py              Startpunkt
 ├── pyproject.toml       Projektmetadaten
 └── README.md
@@ -134,9 +135,28 @@ Die konkreten Szenen liegen unter `src/Scenes/`:
 - `scene1`: Charaktererstellung
 - `scene2`: Ballabend und Entscheidung über die Schürfrechte
 
+Jeder Szenenordner enthält einen Unterordner `texts/`. Allgemeine Texte einer
+Szene stehen in `system.txt`. NPC-nahe Texte stehen in eigenen Dateien wie
+`alena.txt` oder `runa.txt`. Die Dateien werden nicht automatisch gesucht:
+Pfade und benötigte Text-Keys sind im jeweiligen Szenenmodul fest eingetragen.
+
 Die GUI sendet Eingaben als `UiResponse` an das Spiel. Das Spiel antwortet mit
 einer `GameResponse`. Diese Antwort enthält den Text, den Eingabemodus,
 mögliche Auswahloptionen und die aktuellen Charakterdaten.
+
+## Textdateien
+
+Die Textdateien verwenden ein einfaches Blockformat:
+
+```text
+[key]
+Text über mehrere Zeilen.
+```
+
+Der Loader in `src/Utils.py` liest UTF-8, prüft doppelte oder fehlende Keys und
+bricht bei ungültigen Dateien mit klaren Fehlermeldungen ab. Platzhalter wie
+`{name}` werden im Code mit festen Werten gefüllt. Die Textdateien enthalten
+nur angezeigten Inhalt, keine Spiellogik.
 
 ## Dokumentation
 

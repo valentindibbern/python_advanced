@@ -1,0 +1,12 @@
+[observe]
+Alena steht am Rand der Tanzfläche und unterhält sich mit zwei Baronen. Sie sagt: "Eine Höhle kann ein Reich nähren oder vergiften. Wer nur den ersten Wagen Erz sieht, sollte keinen Schlüssel zu ihr bekommen."
+
+Als Bastian lacht, schließt sie für einen Moment die Hand um ihren Siegelring. Du merkst: Alena sucht Verbündete, aber sie duldet keine lauten Abenteurer. Wer ihr hilft, muss Ruhe und Verlässlichkeit zeigen.
+
+[memory]
+Du erinnerst dich an Alenas Hand am Siegelring. Hinter jedem freundlichen Satz liegt ihre Angst vor einem Vertrag, der den Hof fesselt.
+
+[talk]
+Alena hört dir zu, ohne dich zu unterbrechen. "Viele kommen heute mit offenen Händen", sagt sie. "Die meisten haben darin schon einen Vertrag versteckt. Sagt mir: Wollt Ihr Ordnung oder nur einen Anteil?"
+
+Du antwortest vorsichtig. Alena nickt, als du erwähnst, dass ein Schürfrecht ohne Kontrolle nur den nächsten Streit vorbereitet. Zum ersten Mal wirkt sie nicht freundlich, sondern ehrlich müde.

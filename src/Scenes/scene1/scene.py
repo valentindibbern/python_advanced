@@ -1,7 +1,15 @@
 from __future__ import annotations
 from enum import Enum
+from pathlib import Path
 
-from src.Utils import make_response, make_choice
+from src.Utils import (
+    format_text,
+    get_text,
+    load_text_blocks,
+    make_choice,
+    make_response,
+    require_text_keys,
+)
 from src.Classes.Player import Player
 from src.Classes.Scene import Scene
 from src.Datatypes.Models import Choice, GameMsgType, GameResponse
@@ -23,99 +31,112 @@ class CharacterCreationStep(Enum):
     DONE = 4
 
 
+TEXT_DIR = Path(__file__).parent / "texts"
+SYSTEM_TEXT_SOURCE = "scene1/system.txt"
+SYSTEM_TEXTS = load_text_blocks(TEXT_DIR / "system.txt")
+
+CLASS_TEXT_SOURCES: dict[Class, str] = {
+    Class.AUFSTEIGER: "scene1/class_aufsteiger.txt",
+    Class.INTRIGANT: "scene1/class_intrigant.txt",
+    Class.NETZWERKER: "scene1/class_netzwerker.txt",
+}
+CLASS_TEXTS: dict[Class, dict[str, str]] = {
+    Class.AUFSTEIGER: load_text_blocks(TEXT_DIR / "class_aufsteiger.txt"),
+    Class.INTRIGANT: load_text_blocks(TEXT_DIR / "class_intrigant.txt"),
+    Class.NETZWERKER: load_text_blocks(TEXT_DIR / "class_netzwerker.txt"),
+}
+
+SPECIES_TEXT_SOURCES: dict[Species, str] = {
+    Species.HUMAN: "scene1/species_human.txt",
+    Species.ELF: "scene1/species_elf.txt",
+    Species.DWARF: "scene1/species_dwarf.txt",
+}
+SPECIES_TEXTS: dict[Species, dict[str, str]] = {
+    Species.HUMAN: load_text_blocks(TEXT_DIR / "species_human.txt"),
+    Species.ELF: load_text_blocks(TEXT_DIR / "species_elf.txt"),
+    Species.DWARF: load_text_blocks(TEXT_DIR / "species_dwarf.txt"),
+}
+
+require_text_keys(
+    SYSTEM_TEXTS,
+    [
+        "name_question",
+        "name_empty_error",
+        "wrong_input_mode",
+        "name_saved",
+        "invalid_choice",
+        "invalid_class",
+        "class_selected",
+        "invalid_species",
+        "species_selected",
+        "invalid_attributes",
+        "attribute_intro",
+        "attribute_choice_knowledge",
+        "attribute_choice_wit",
+        "attribute_choice_understanding",
+        "character_created",
+        "goal_aufsteiger",
+        "goal_intrigant",
+        "goal_netzwerker",
+    ],
+    SYSTEM_TEXT_SOURCE,
+)
+for player_class, texts in CLASS_TEXTS.items():
+    require_text_keys(texts, ["choice_label", "story"], CLASS_TEXT_SOURCES[player_class])
+for species, texts in SPECIES_TEXTS.items():
+    require_text_keys(texts, ["choice_label", "story"], SPECIES_TEXT_SOURCES[species])
+
+
 def _get_attribute_choices() -> list[Choice]:
-    choices = []
+    labels = {
+        Attributes.KNOWLEDGE: get_text(
+            SYSTEM_TEXTS, "attribute_choice_knowledge", SYSTEM_TEXT_SOURCE
+        ),
+        Attributes.WIT: get_text(SYSTEM_TEXTS, "attribute_choice_wit", SYSTEM_TEXT_SOURCE),
+        Attributes.UNDERSTANDING: get_text(
+            SYSTEM_TEXTS, "attribute_choice_understanding", SYSTEM_TEXT_SOURCE
+        ),
+    }
+    return [make_choice(f"attributes:{attribute.name}", labels[attribute]) for attribute in Attributes]
 
-    for main_attribute in Attributes:
-        parts = []
-        for attribute in Attributes:
-            points = 2 if attribute == main_attribute else 1
-            parts.append(f"{attribute.get_label()} +{points}")
-
-        choices.append(make_choice(f"attributes:{main_attribute.name}", ", ".join(parts)))
-
-    return choices
 
 def _get_species_choices() -> list[Choice]:
-    labels = {
-        Species.HUMAN: "Mensch: nah am Hof, +1 Schlagfertigkeit",
-        Species.ELF: "Elf: alte Rechte, +1 Verständnis",
-        Species.DWARF: "Zwerg: Wissen über die Tiefe, +1 Wissen",
-    }
     return [
-        make_choice(f"species:{species.name}", labels[species])
+        make_choice(
+            f"species:{species.name}",
+            get_text(SPECIES_TEXTS[species], "choice_label", SPECIES_TEXT_SOURCES[species]),
+        )
         for species in Species
         if species is not Species.NOTSET
     ]
 
+
 def _get_class_choices() -> list[Choice]:
-    labels = {
-        Class.AUFSTEIGER: "Aufsteiger: dein Name soll Gewicht bekommen",
-        Class.INTRIGANT: "Intrigant: ein Rivale soll fallen",
-        Class.NETZWERKER: "Netzwerker: ein Kontakt soll Türen öffnen",
-    }
     return [
-        make_choice(f"class:{player_class.name}", labels[player_class])
+        make_choice(
+            f"class:{player_class.name}",
+            get_text(CLASS_TEXTS[player_class], "choice_label", CLASS_TEXT_SOURCES[player_class]),
+        )
         for player_class in Class
         if player_class is not Class.NOTSET
     ]
 
+
 def _class_story_text(player_class: Class) -> str:
-    texts = {
-        Class.AUFSTEIGER: (
-            "Du willst nicht länger am Rand der Macht stehen. Wenn deine Seite "
-            "heute Teil der Entscheidung wird, spricht der Hof morgen anders "
-            "über deinen Namen."
-        ),
-        Class.INTRIGANT: (
-            "Jemand im Saal steht zwischen dir und deinem nächsten Schritt. "
-            "Heute Abend muss diese Person an Einfluss verlieren, ohne dass dein "
-            "eigener Name in den Dreck gezogen wird."
-        ),
-        Class.NETZWERKER: (
-            "Du weißt, dass ein einzelnes Gespräch mehr wert sein kann als ein "
-            "alter Titel. Heute suchst du eine Verbindung, die bis zum "
-            "Königspaar reicht."
-        ),
-    }
-    return texts[player_class]
+    return get_text(CLASS_TEXTS[player_class], "story", CLASS_TEXT_SOURCES[player_class])
+
 
 def _species_story_text(species: Species) -> str:
-    texts = {
-        Species.HUMAN: (
-            "Als Mensch kennst du die Sprache des Hofes. Das hilft, aber es "
-            "macht dich auch Teil eines Netzes aus Gefallen, Schuld und "
-            "heimlichen Absprachen."
-        ),
-        Species.ELF: (
-            "Als Elf trägst du alte Erinnerungen in einen Saal, der lieber von "
-            "neuen Rechten spricht. Viele hören dir höflich zu und misstrauen "
-            "dir trotzdem."
-        ),
-        Species.DWARF: (
-            "Als Zwerg weißt du, was Stein verschweigt und was er verzeiht. Der "
-            "Hof braucht dieses Wissen, würde aber gerne selbst darüber "
-            "verfügen."
-        ),
-    }
-    return texts[species]
+    return get_text(SPECIES_TEXTS[species], "story", SPECIES_TEXT_SOURCES[species])
+
 
 def _attribute_intro_text() -> str:
-    return (
-        "Wähle nun, worauf du dich verlässt.\n\n"
-        "Wissen hilft bei Urkunden, alten Rechten und dem Wert der Höhle. "
-        "Schlagfertigkeit hilft, wenn der Saal auf eine schnelle Antwort wartet. "
-        "Verständnis hilft, wenn Absichten wichtiger sind als Worte.\n\n"
-        "Dein Hauptattribut erhält 2 Punkte. Die anderen beiden erhalten je "
-        "1 Punkt. Danach kommt der Bonus deiner Spezies dazu."
-    )
+    return get_text(SYSTEM_TEXTS, "attribute_intro", SYSTEM_TEXT_SOURCE)
+
 
 def _get_goal_text(player_class: Class, species: Species) -> str:
     if player_class is Class.AUFSTEIGER:
-        return (
-            "Aufsteiger: Deine Spezies soll Teil der Allianz werden, "
-            "die am Ende die Schürfrechte erhält."
-        )
+        return get_text(SYSTEM_TEXTS, "goal_aufsteiger", SYSTEM_TEXT_SOURCE)
 
     if player_class is Class.INTRIGANT:
         rival = "ein Mensch"
@@ -124,20 +145,14 @@ def _get_goal_text(player_class: Class, species: Species) -> str:
         elif species is Species.ELF:
             rival = "ein Zwerg"
 
-        return (
-            "Intrigant: Dein Rivale darf am Ende nicht Teil der siegreichen "
-            f"Allianz sein. Dein Rivale ist {rival}."
-        )
+        return format_text(SYSTEM_TEXTS, "goal_intrigant", SYSTEM_TEXT_SOURCE, rival=rival)
 
     if player_class is Class.NETZWERKER:
         target = "ein Zwerg oder Elf"
         if species in (Species.DWARF, Species.ELF):
             target = "ein Mensch"
 
-        return (
-            "Netzwerker: Du willst neue Freundschaften schließen und gewinnen, "
-            f"wenn du am Abend eine Person des Königspaars über {target} erreichst."
-        )
+        return format_text(SYSTEM_TEXTS, "goal_netzwerker", SYSTEM_TEXT_SOURCE, target=target)
 
     return ""
 
@@ -159,10 +174,7 @@ class CharacterCreationScene(Scene):
     def start(self) -> GameResponse:
         self.step = CharacterCreationStep.NAME
         return make_response(
-            "Die Einladung nennt dich nur Baron. Der Hof wird sich deinen Namen "
-            "erst merken, wenn du heute Abend nützlich, gefährlich oder mutig "
-            "genug wirkst.\n\n"
-            "Wie heißt dein Charakter?",
+            get_text(SYSTEM_TEXTS, "name_question", SYSTEM_TEXT_SOURCE),
             input_mode=InputMode.TEXT,
             character=self.player.get_character_data(),
             title="Charaktererstellung",
@@ -174,11 +186,13 @@ class CharacterCreationScene(Scene):
         text = text.strip()
 
         if self.step != CharacterCreationStep.NAME:
-            return self._response_for_current_step("Bitte wähle eine der angezeigten Optionen.")
+            return self._response_for_current_step(
+                get_text(SYSTEM_TEXTS, "wrong_input_mode", SYSTEM_TEXT_SOURCE)
+            )
 
         if text == "":
             return make_response(
-                "Bitte gib einen Namen ein.",
+                get_text(SYSTEM_TEXTS, "name_empty_error", SYSTEM_TEXT_SOURCE),
                 input_mode=InputMode.TEXT,
                 character=self.player.get_character_data(),
                 title="Charaktererstellung",
@@ -189,8 +203,7 @@ class CharacterCreationScene(Scene):
         self.player.name = text
         self.step = CharacterCreationStep.PLAYER_CLASS
         return self._response_for_current_step(
-            f"Dein Charakter heißt {self.name}.\n\n"
-            "Wähle, mit welchem Ziel du den Ballsaal betrittst."
+            format_text(SYSTEM_TEXTS, "name_saved", SYSTEM_TEXT_SOURCE, name=self.name)
         )
 
     def handle_choice(self, choice_id: str) -> GameResponse:
@@ -203,7 +216,7 @@ class CharacterCreationScene(Scene):
         if self.step == CharacterCreationStep.ATTRIBUTES:
             return self._handle_attribute_choice(choice_id)
 
-        return self._response_for_current_step("Diese Auswahl ist hier nicht möglich.")
+        return self._response_for_current_step(get_text(SYSTEM_TEXTS, "invalid_choice", SYSTEM_TEXT_SOURCE))
 
     def is_done(self) -> bool:
         return self.step == CharacterCreationStep.DONE
@@ -214,57 +227,82 @@ class CharacterCreationScene(Scene):
     def _handle_class_choice(self, choice_id: str) -> GameResponse:
         prefix = "class:"
         if not choice_id.startswith(prefix):
-            return self._response_for_current_step("Bitte wähle eine gültige Klasse.")
+            return self._response_for_current_step(
+                get_text(SYSTEM_TEXTS, "invalid_class", SYSTEM_TEXT_SOURCE)
+            )
 
         class_name = choice_id.removeprefix(prefix)
         try:
             self.player_class = Class[class_name]
         except KeyError:
-            return self._response_for_current_step("Bitte wähle eine gültige Klasse.")
+            return self._response_for_current_step(
+                get_text(SYSTEM_TEXTS, "invalid_class", SYSTEM_TEXT_SOURCE)
+            )
 
         if self.player_class is Class.NOTSET:
-            return self._response_for_current_step("Bitte wähle eine gültige Klasse.")
+            return self._response_for_current_step(
+                get_text(SYSTEM_TEXTS, "invalid_class", SYSTEM_TEXT_SOURCE)
+            )
 
         self.player.player_class = self.player_class
         self.step = CharacterCreationStep.SPECIES
         return self._response_for_current_step(
-            f"Du hast die Klasse {self.player_class.get_label()} gewählt.\n\n"
-            f"{_class_story_text(self.player_class)}\n\n"
-            "Wähle nun deine Spezies."
+            format_text(
+                SYSTEM_TEXTS,
+                "class_selected",
+                SYSTEM_TEXT_SOURCE,
+                player_class=self.player_class.get_label(),
+                class_story=_class_story_text(self.player_class),
+            )
         )
 
     def _handle_species_choice(self, choice_id: str) -> GameResponse:
         prefix = "species:"
         if not choice_id.startswith(prefix):
-            return self._response_for_current_step("Bitte wähle eine gültige Spezies.")
+            return self._response_for_current_step(
+                get_text(SYSTEM_TEXTS, "invalid_species", SYSTEM_TEXT_SOURCE)
+            )
 
         species_name = choice_id.removeprefix(prefix)
         try:
             self.species = Species[species_name]
         except KeyError:
-            return self._response_for_current_step("Bitte wähle eine gültige Spezies.")
+            return self._response_for_current_step(
+                get_text(SYSTEM_TEXTS, "invalid_species", SYSTEM_TEXT_SOURCE)
+            )
 
         if self.species is Species.NOTSET:
-            return self._response_for_current_step("Bitte wähle eine gültige Spezies.")
+            return self._response_for_current_step(
+                get_text(SYSTEM_TEXTS, "invalid_species", SYSTEM_TEXT_SOURCE)
+            )
 
         self.player.species = self.species
         self.step = CharacterCreationStep.ATTRIBUTES
         return self._response_for_current_step(
-            f"Du hast die Spezies {self.species.get_label()} gewählt.\n\n"
-            f"{_species_story_text(self.species)}\n\n"
-            f"{_attribute_intro_text()}"
+            format_text(
+                SYSTEM_TEXTS,
+                "species_selected",
+                SYSTEM_TEXT_SOURCE,
+                species=self.species.get_label(),
+                species_story=_species_story_text(self.species),
+                attribute_intro=_attribute_intro_text(),
+            )
         )
 
     def _handle_attribute_choice(self, choice_id: str) -> GameResponse:
         prefix = "attributes:"
         if not choice_id.startswith(prefix):
-            return self._response_for_current_step("Bitte wähle eine gültige Attributverteilung.")
+            return self._response_for_current_step(
+                get_text(SYSTEM_TEXTS, "invalid_attributes", SYSTEM_TEXT_SOURCE)
+            )
 
         main_attribute_name = choice_id.removeprefix(prefix)
         try:
             main_attribute = Attributes[main_attribute_name]
         except KeyError:
-            return self._response_for_current_step("Bitte wähle eine gültige Attributverteilung.")
+            return self._response_for_current_step(
+                get_text(SYSTEM_TEXTS, "invalid_attributes", SYSTEM_TEXT_SOURCE)
+            )
 
         self.attributes = self._get_starting_attributes(main_attribute)
         self.player.attributes = self.attributes
@@ -279,10 +317,12 @@ class CharacterCreationScene(Scene):
             f"Ziel: {self.player.goal}"
         )
         return make_response(
-            f"Charakter erstellt.\n\n{character_summary}\n\n"
-            "Ein Diener öffnet die Tür zum Ballsaal. Musik, Stimmen und der "
-            "Geruch von Wachs schlagen dir entgegen. Jetzt zählt nicht mehr, "
-            "wer du sein willst, sondern was du aus diesem Abend machst.",
+            format_text(
+                SYSTEM_TEXTS,
+                "character_created",
+                SYSTEM_TEXT_SOURCE,
+                character_summary=character_summary,
+            ),
             input_mode=InputMode.NONE,
             character=self.player.get_character_data(),
             title="Charaktererstellung",

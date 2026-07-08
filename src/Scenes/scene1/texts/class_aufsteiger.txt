@@ -1,0 +1,5 @@
+[choice_label]
+Aufsteiger: dein Name soll Gewicht bekommen
+
+[story]
+Du willst nicht länger am Rand der Macht stehen. Wenn deine Seite heute Teil der Entscheidung wird, spricht der Hof morgen anders über deinen Namen.
