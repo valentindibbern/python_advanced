@@ -13,13 +13,16 @@ wichtig genug, dass andere Figuren seine Unterstützung suchen können. Seine
 Beobachtungen, Kontakte und Entscheidungen können später beeinflussen, wer am
 Ende profitiert.
 
-Der aktuelle Code setzt den Einstieg in dieses Szenario um:
+Der aktuelle Code setzt dieses Szenario als vollständigen kurzen Ballabend um:
 
 1. Startbildschirm anzeigen
 2. Charakter erstellen
 3. Im Ballsaal ankommen
 4. Wichtige Personen beobachten
-5. Die aktuell implementierte Ballsaal-Szene mit einer Endmeldung abschließen
+5. Ein politisches Gespräch führen
+6. Vor dem Königspaar reagieren
+7. Im Rat eine Allianz unterstützen
+8. Am Ende erfahren, ob das persönliche Ziel erreicht wurde
 
 ## Setting
 
@@ -62,13 +65,13 @@ Der Ablauf ist:
 Leere Namen werden nicht akzeptiert. Ungültige Choice-IDs führen zu einer
 freundlichen Fehlermeldung und die aktuelle Auswahl bleibt bestehen.
 
-### Szene 2: Ankunft im Ballsaal
+### Szene 2: Ballabend und Schürfrecht
 
 Die zweite Szene liegt in `src/Scenes/scene2/scene.py`.
 
 Der Spieler betritt den Ballsaal als Baron. Der Herold nennt Titel und Namen
-der Figur. Danach kann der Spieler sich im Saal umsehen und fünf wichtige
-Personen beobachten:
+der Figur. Danach kann der Spieler sich im Saal umsehen und wichtige Personen
+beobachten:
 
 - Herzogin Alena von Falkenruh
 - Graf Bastian von Eisenmark
@@ -77,9 +80,10 @@ Personen beobachten:
 - Hofsekretär Marik Voss
 
 Jede Person kann einmal beobachtet werden. Beobachtete Personen verschwinden
-aus der Auswahl. Nachdem alle fünf Personen beobachtet wurden, kann sich der
-Spieler unter die Gäste mischen. Damit endet der aktuell implementierte
-Inhalt der Ballsaal-Szene.
+aus der Auswahl. Nachdem mindestens drei Personen beobachtet wurden, kann der
+Spieler ein erstes Gespräch beginnen. Danach folgt ein kurzer Auftritt des
+Königspaars, eine Entscheidung im Rat und am Ende die Verkündung der
+Schürfrechte.
 
 ## Spielerfigur
 
@@ -95,29 +99,42 @@ Gespeicherte Daten:
 - Schlagfertigkeit
 - Verständnis
 - Ziel
+- Zielstatus
 
-Das Ziel-Feld existiert bereits in den Charakterdaten, wird im aktuellen Code
-aber noch nicht automatisch durch die Klasse gesetzt.
+Das Ziel wird nach Klasse und Spezies automatisch gesetzt. Der Zielstatus wird
+im Ballabend aktualisiert, aber erst am Ende endgültig bewertet.
 
 ## Klassen
 
-Die Klasse bestimmt aktuell vor allem die Identität der Figur. Ein eigener
-Attributbonus oder ein eigenes Klassenziel wird im Code noch nicht vergeben.
+Die Klasse bestimmt das persönliche Ziel der Figur.
 
 ### Aufsteiger
 
 Der Aufsteiger sieht die Höhle als Chance, seine Stellung zu verbessern und
 wirtschaftlich oder politisch aufzusteigen.
 
+Ziel: Die eigene Spezies soll Teil der Allianz sein, die am Ende die
+Schürfrechte erhält. Menschen gehören zur Hofallianz, Zwerge zum Gildenpakt
+und Elfen zur Gesandtschaft. Der gemeinsame Kronenpakt zählt für dieses Ziel
+ebenfalls als Erfolg.
+
 ### Intrigant
 
 Der Intrigant interessiert sich weniger für die Höhle selbst. Er sieht sie als
 Werkzeug, um Konkurrenten zu schwächen oder geheime Interessen aufzudecken.
 
+Ziel: Der Rivale darf am Ende nicht Teil der entscheidenden Allianz sein. Bei
+einem menschlichen Spieler ist der Rivale ein Mensch, bei einem Zwerg ein Elf
+und bei einem Elf ein Zwerg.
+
 ### Netzwerker
 
 Der Netzwerker will Kontakte knüpfen, Vertrauen aufbauen und seine Stellung am
 Hof langfristig verbessern.
+
+Ziel: Der Netzwerker will neue Freundschaften schließen und dadurch eine
+Person des Königspaars erreichen. Menschen suchen dafür Kontakt zu einem Zwerg
+oder Elf. Zwerge und Elfen suchen dafür Kontakt zu einem Menschen.
 
 ## Spezies
 
@@ -202,21 +219,31 @@ diplomatische Gefahren.
 Marik ist offiziell neutral, weiß aber vermutlich mehr über Ansprüche,
 Einladungen und alte Schriftstücke, als er offen sagt.
 
+### Königin Meridia
+
+Meridia leitet den Abend politisch. Sie hört kurz eine Stimme aus dem Saal an
+und bewertet, wer Verantwortung statt nur Gewinn verspricht.
+
+### König Arwed
+
+Arwed verkündet am Ende die Entscheidung über die Schürfrechte. Er spricht
+weniger als Meridia, steht aber für die rechtliche Autorität der Krone.
+
 ## Technische Umsetzung
 
 `Game` lädt Szenen über eine einfache `_load_scene`-Methode. Die aktuelle Szene
 verarbeitet Texteingaben und Auswahlentscheidungen. Wenn eine Szene fertig ist,
 holt `Game` den aktuellen `Player` aus der Szene und startet die nächste Szene.
-Wenn keine weitere Szene vorhanden ist, gibt `Game` eine einfache Endmeldung
-zurück und setzt den Zustand auf `FINISHED`.
+Wenn keine weitere Szene vorhanden ist, gibt `Game` die vorhandene Endantwort
+der Szene zurück und setzt den Zustand auf `FINISHED`.
 
 Die Tkinter-Oberfläche kennt keine Details der Spiellogik. Sie zeigt nur die
 `GameResponse` an und sendet Texteingaben oder Choice-IDs als `UiResponse`
 zurück. Die Buttons `Start` und `Stop` sind Steuerknöpfe der Oberfläche und
 keine normalen Spiel-Choices.
 
-## Aktuelle Grenze
+## Ende
 
-Nach der Ballsaal-Szene ist im Code noch keine dritte Handlungsszene
-vorhanden. Das Spiel zeigt an dieser Stelle eine Endmeldung, statt eine
-fehlende Szene zu laden.
+Das Spiel endet nach der Verkündung im Ballsaal. Es gibt danach keine weitere
+Handlungsszene. Die Endmeldung enthält die siegreiche Allianz und den
+Zielstatus des Spielers.

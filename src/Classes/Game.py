@@ -92,6 +92,9 @@ class Game:
         next_scene = self._load_scene(self.current_scene_id)
         if next_scene is None:
             self.state = State.FINISHED
+            if previous_response["msg_type"] == GameMsgType.END:
+                return self._prepare_response(previous_response, answer_id)
+
             end_response = make_response(
                 previous_response["text"] + "\n\nDer aktuelle Spielabschnitt ist abgeschlossen.",
                 input_mode=InputMode.NONE,

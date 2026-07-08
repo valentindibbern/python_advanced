@@ -50,6 +50,37 @@ def _get_class_choices() -> list[Choice]:
         if player_class is not Class.NOTSET
     ]
 
+def _get_goal_text(player_class: Class, species: Species) -> str:
+    if player_class is Class.AUFSTEIGER:
+        return (
+            "Aufsteiger: Deine Spezies soll Teil der Allianz werden, "
+            "die am Ende die Schürfrechte erhält."
+        )
+
+    if player_class is Class.INTRIGANT:
+        rival = "ein Mensch"
+        if species is Species.DWARF:
+            rival = "ein Elf"
+        elif species is Species.ELF:
+            rival = "ein Zwerg"
+
+        return (
+            "Intrigant: Dein Rivale darf am Ende nicht Teil der siegreichen "
+            f"Allianz sein. Dein Rivale ist {rival}."
+        )
+
+    if player_class is Class.NETZWERKER:
+        target = "ein Zwerg oder Elf"
+        if species in (Species.DWARF, Species.ELF):
+            target = "ein Mensch"
+
+        return (
+            "Netzwerker: Du willst neue Freundschaften schließen und gewinnen, "
+            f"wenn du am Abend eine Person des Königspaars über {target} erreichst."
+        )
+
+    return ""
+
 
 class CharacterCreationScene(Scene):
     def __init__(self, scene_id: int, player: Player) -> None:
@@ -170,12 +201,15 @@ class CharacterCreationScene(Scene):
 
         self.attributes = self._get_starting_attributes(main_attribute)
         self.player.attributes = self.attributes
+        self.player.goal = _get_goal_text(self.player_class, self.species)
+        self.player.goal_status = "Noch offen"
         self.step = CharacterCreationStep.DONE
         character_summary = (
             f"Name: {self.name}\n"
             f"Klasse: {self.player_class.get_label()}\n"
             f"Spezies: {self.species.get_label()}\n"
-            f"Attributwahl: {main_attribute.get_label()}"
+            f"Attributwahl: {main_attribute.get_label()}\n"
+            f"Ziel: {self.player.goal}"
         )
         return make_response(
             f"Charakter erstellt.\n\n{character_summary}\n\nDu bist bereit für die nächste Szene.",

@@ -10,7 +10,8 @@ class Player:
         species: Species = Species.NOTSET,
         player_class: Class = Class.NOTSET,
         attributes: dict[Attributes, int] | None = None,
-        goal: str = ""
+        goal: str = "",
+        goal_status: str = "",
     ) -> None:
         self.name = name
         self.title = title
@@ -18,6 +19,7 @@ class Player:
         self.player_class = player_class
         self.attributes = attributes or {Attributes.KNOWLEDGE: 0, Attributes.WIT: 0, Attributes.UNDERSTANDING: 0}
         self.goal = goal
+        self.goal_status = goal_status
 
     def get_character_data(self) -> PlayerData:
         return {
@@ -29,4 +31,5 @@ class Player:
             "wit": self.attributes[Attributes.WIT],
             "understanding": self.attributes[Attributes.UNDERSTANDING],
             "goal": self.goal,
+            "goal_status": self.goal_status,
         }

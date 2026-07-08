@@ -261,12 +261,7 @@ class Ui:
     def _stop_game(self) -> None:
         self.root.destroy()
 
-    def _make_ui_response(
-        self,
-        msg_type: UiMsgType,
-        content: str = "",
-        choice_id: str = "",
-    ) -> UiResponse:
+    def _make_ui_response(self, msg_type: UiMsgType, content: str = "", choice_id: str = "") -> UiResponse:
         self.message_count += 1
         return {
             "msg_id": f"ui-{self.message_count}-{msg_type.value}",
@@ -307,6 +302,7 @@ class Ui:
             f"Verständnis: {player_data['understanding']}",
             "",
             f"Ziel: {player_data['goal'] if player_data['goal'] else ' - '}",
+            f"Status: {player_data['goal_status'] if player_data['goal_status'] else ' - '}",
         ]
 
         self.character_details.configure(text="\n".join(details))

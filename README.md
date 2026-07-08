@@ -31,17 +31,17 @@ Der aktuelle Code enthält drei Abschnitte:
 
 1. Startbildschirm
 2. Charaktererstellung
-3. Ankunft im Ballsaal
+3. Ballabend mit Beobachtungen, Gesprächen, Ratsentscheidung und Ende
 
 Der Startbildschirm wird beim Laden des Spiels angezeigt. Über `Start` beginnt
 die Charaktererstellung. Dort gibt der Spieler einen Namen ein, wählt eine von
 drei Klassen, wählt eine von drei Spezies und entscheidet sich für eine
 Attributverteilung. Danach beginnt die erste Handlungsszene im Ballsaal.
 
-Im Ballsaal kann der Spieler wichtige Personen beobachten. Dabei werden
-Informationen über ihre Ziele, Interessen und mögliche Konflikte gesammelt.
-Wenn alle wichtigen Personen beobachtet wurden, ist die Ballsaal-Szene fertig.
-Danach zeigt das Spiel eine einfache Endmeldung.
+Im Ballsaal kann der Spieler wichtige Personen beobachten, ein wichtiges
+Gespräch führen, vor dem Königspaar reagieren und im Rat eine Allianz
+unterstützen. Am Ende des Abends wird verkündet, wer die Schürfrechte erhält.
+Erst dann erfährt der Spieler, ob das persönliche Ziel erreicht wurde.
 
 ## Umgesetzte Anforderungen
 
@@ -56,16 +56,22 @@ Danach zeigt das Spiel eine einfache Endmeldung.
 - unterschiedliche Boni durch Spezies
 - einfache Handlung am königlichen Hof
 - Entscheidungen durch den Spieler
-- Abschluss der aktuellen Ballsaal-Szene mit Endmeldung
+- längere Ballsaalhandlung mit mehreren Plotpunkten
+- zielabhängige Erfolgsbedingungen für Aufsteiger, Intrigant und Netzwerker
+- Zielstatus in der rechten Sidebar
+- klares Ende mit Auswertung
 - einfache Fehlerbehandlung bei leeren oder ungültigen Eingaben
 
 ## Klassen, Spezies und Attribute
 
-Klassen:
+Klassen und Ziele:
 
-- Aufsteiger
-- Intrigant
-- Netzwerker
+- Aufsteiger: will, dass die eigene Spezies Teil der Allianz mit
+  Schürfrechten wird.
+- Intrigant: will verhindern, dass der Rivale Teil der entscheidenden Allianz
+  bleibt.
+- Netzwerker: will eine neue Verbindung nutzen, um mit einer Person des
+  Königspaars zu interagieren.
 
 Spezies:
 
@@ -118,7 +124,7 @@ Die konkreten Szenen liegen unter `src/Scenes/`:
 
 - `scene0`: Startbildschirm
 - `scene1`: Charaktererstellung
-- `scene2`: Ankunft im Ballsaal
+- `scene2`: Ballabend und Entscheidung über die Schürfrechte
 
 Die GUI sendet Eingaben als `UiResponse` an das Spiel. Das Spiel antwortet mit
 einer `GameResponse`. Diese Antwort enthält den Text, den Eingabemodus,
@@ -130,7 +136,8 @@ Die wichtigsten Spielinhalte sind zusätzlich unter `docs/gamecontent/`
 dokumentiert. Dort stehen die Begriffe, Szenen, NPCs und Choice-IDs, die im
 Code verwendet werden.
 
-## Bekannte Grenze
+## Spielende
 
-Nach der Ballsaal-Szene gibt es noch keine weitere spielbare Handlungsszene.
-Das Spiel beendet den aktuellen Abschnitt dort mit einer einfachen Endmeldung.
+Das Spiel endet nach der Verkündung der Schürfrechte. Die rechte Sidebar zeigt
+während des Abends Zwischenstände zum persönlichen Ziel. Gewonnen oder verloren
+wird aber erst am Ende.

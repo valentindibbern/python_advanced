@@ -12,6 +12,7 @@ def get_empty_player_data() -> PlayerData:
         "wit": 0,
         "understanding": 0,
         "goal": "",
+        "goal_status": "",
     }
 
 

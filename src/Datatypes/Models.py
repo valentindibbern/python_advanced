@@ -32,6 +32,7 @@ class PlayerData(TypedDict):
     wit: int
     understanding: int
     goal: str
+    goal_status: str
 
 
 class GameResponse(TypedDict):

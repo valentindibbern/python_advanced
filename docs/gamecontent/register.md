@@ -17,20 +17,22 @@ Felder:
 - Schlagfertigkeit
 - Verständnis
 - Ziel
+- Status
 
-Der Titel ist aktuell immer `Baron`. Das Ziel-Feld ist vorhanden, wird aber
-noch nicht automatisch gesetzt.
+Der Titel ist aktuell immer `Baron`. Das Ziel wird nach Klasse und Spezies
+gesetzt. Der Status zeigt während des Ballabends Zwischenstände und am Ende
+das Ergebnis.
 
-## Klassen
+## Klassen und Ziele
 
 Code-Enum: `Class`
 
-| Enum-Wert | Anzeige |
-| --- | --- |
-| `AUFSTEIGER` | Aufsteiger |
-| `INTRIGANT` | Intrigant |
-| `NETZWERKER` | Netzwerker |
-| `NOTSET` | Nicht gesetzt |
+| Enum-Wert | Anzeige | Ziel |
+| --- | --- | --- |
+| `AUFSTEIGER` | Aufsteiger | Die eigene Spezies soll Teil der Allianz mit Schürfrechten sein. |
+| `INTRIGANT` | Intrigant | Der Rivale darf nicht Teil der entscheidenden Allianz sein. |
+| `NETZWERKER` | Netzwerker | Über eine neue Verbindung eine Person des Königspaars erreichen. |
+| `NOTSET` | Nicht gesetzt | kein Ziel |
 
 Choice-IDs in der Charaktererstellung:
 
@@ -42,18 +44,40 @@ Choice-IDs in der Charaktererstellung:
 
 Code-Enum: `Species`
 
-| Enum-Wert | Anzeige | Bonus |
-| --- | --- | --- |
-| `HUMAN` | Mensch | +1 Schlagfertigkeit |
-| `ELF` | Elf | +1 Verständnis |
-| `DWARF` | Zwerg | +1 Wissen |
-| `NOTSET` | Nicht gesetzt | kein Bonus |
+| Enum-Wert | Anzeige | Bonus | Politische Gruppe |
+| --- | --- | --- | --- |
+| `HUMAN` | Mensch | +1 Schlagfertigkeit | königliche Hofallianz |
+| `ELF` | Elf | +1 Verständnis | elfische Gesandtschaft |
+| `DWARF` | Zwerg | +1 Wissen | Gildenpakt |
+| `NOTSET` | Nicht gesetzt | kein Bonus | keine |
 
 Choice-IDs in der Charaktererstellung:
 
 - `species:HUMAN`
 - `species:ELF`
 - `species:DWARF`
+
+## Zielregeln
+
+Aufsteiger:
+
+- Mensch gewinnt, wenn `hof` oder `balanced` die Schürfrechte erhält.
+- Zwerg gewinnt, wenn `gilde` oder `balanced` die Schürfrechte erhält.
+- Elf gewinnt, wenn `gesandtschaft` oder `balanced` die Schürfrechte erhält.
+
+Intrigant:
+
+- Menschlicher Spieler: Rivale ist ein Mensch.
+- Zwergischer Spieler: Rivale ist ein Elf.
+- Elfischer Spieler: Rivale ist ein Zwerg.
+- Erfolg, wenn der Rivale durch `royal:accuse` geschwächt wird oder wenn die
+  Rivalengruppe nicht die siegreiche Allianz ist.
+
+Netzwerker:
+
+- Menschlicher Spieler sucht Kontakt zu einem Zwerg oder Elf.
+- Zwergischer oder elfischer Spieler sucht Kontakt zu einem Menschen.
+- Erfolg, wenn der Spieler vor dem Königspaar `royal:speak` wählt.
 
 ## Attribute
 
@@ -65,14 +89,14 @@ Code-Enum: `Attributes`
 | `WIT` | Schlagfertigkeit |
 | `UNDERSTANDING` | Verständnis |
 
-Die Startverteilung nutzt das Muster `2, 1, 1`. Der Spieler wählt ein
-Hauptattribut:
+Die Startverteilung nutzt das Muster `2, 1, 1`. Danach wird der Speziesbonus
+addiert.
+
+Choice-IDs:
 
 - `attributes:KNOWLEDGE`
 - `attributes:WIT`
 - `attributes:UNDERSTANDING`
-
-Danach wird der Speziesbonus addiert.
 
 ## Szene 0: Startbildschirm
 
@@ -83,24 +107,12 @@ Titel in der UI: `Start`
 Zweck:
 
 - Begrüßt den Spieler beim Laden des Fensters.
-- Erklärt, dass das Spiel über den Button `Start` beginnt.
+- Erklärt den Start über den Button `Start`.
 - Verweist darauf, dass `Stop` das Fenster schließt.
-
-Ablauf:
-
-1. `Game.start()` zeigt Szene 0 an.
-2. Die UI zeigt den Starttext im History-Bereich.
-3. Die Texteingabe bleibt deaktiviert.
-4. Der Spieler klickt unten rechts auf `Start`.
-5. `Game.start_game()` lädt Szene 1.
 
 Wichtige Message-ID:
 
 - `game-start-screen`
-
-Choice-IDs:
-
-- keine
 
 ## Szene 1: Charaktererstellung
 
@@ -114,15 +126,7 @@ Ablauf:
 2. Klasse wählen
 3. Spezies wählen
 4. Attributverteilung wählen
-5. Charakter abschließen
-
-Fehlerbehandlung:
-
-- Leerer Name: `Bitte gib einen Namen ein.`
-- Falsche Eingabe bei Auswahlfragen: Hinweis auf die angezeigten Optionen
-- Ungültige Klasse: `Bitte wähle eine gültige Klasse.`
-- Ungültige Spezies: `Bitte wähle eine gültige Spezies.`
-- Ungültige Attributverteilung: `Bitte wähle eine gültige Attributverteilung.`
+5. Ziel setzen und Charakter abschließen
 
 Wichtige Message-IDs:
 
@@ -133,105 +137,140 @@ Wichtige Message-IDs:
 - `game-character-attributes-question`
 - `game-character-created`
 
-## Szene 2: Ankunft im Ballsaal
+## Szene 2: Ballabend
 
 Code-Datei: `src/Scenes/scene2/scene.py`
 
 Titel in der UI:
 
 - `Ankunft im Ballsaal`
-- `Ballsaal`
+- `Die Gäste`
+- `Beobachtung`
+- `Erstes Gespräch`
+- `Gespräch`
+- `Vor dem Königspaar`
+- `Ratssaal`
+- `Ende des Ballabends`
 
 Ablauf:
 
 1. Der Spieler kommt im Ballsaal an.
-2. Der Spieler wählt `Dich im Saal umsehen`.
-3. Der Spieler beobachtet fünf wichtige Personen.
-4. Nachdem alle Personen beobachtet wurden, wählt der Spieler
-   `Dich unter die Gäste mischen`.
-5. Die Ballsaal-Szene ist fertig.
+2. Der Spieler beobachtet mindestens drei wichtige Personen.
+3. Der Spieler führt ein erstes politisches Gespräch.
+4. Der Spieler reagiert auf den Auftritt des Königspaars.
+5. Der Spieler unterstützt im Rat eine Allianz.
+6. Das Königspaar verkündet die Schürfrechte.
+7. Das Spiel wertet das persönliche Ziel aus.
 
-Choice-IDs:
+## Choice-IDs in Szene 2
+
+Start:
 
 - `continue:look_around`
-- `npc:duchess`
-- `npc:count`
-- `npc:guildmaster`
-- `npc:envoy`
-- `npc:secretary`
-- `continue:end_scene`
 
-Wichtige Message-IDs:
+Beobachtungen:
 
-- `game-ballroom-arrival`
-- `game-ballroom-npc-overview`
-- `game-ballroom-observation`
-- `game-ballroom-all-observed`
-- `game-ballroom-finished`
+- `observe:alena`
+- `observe:bastian`
+- `observe:runa`
+- `observe:caelion`
+- `observe:marik`
+- `continue:first_talk`
+
+Gespräche:
+
+- `talk:alena`
+- `talk:bastian`
+- `talk:runa`
+- `talk:caelion`
+- `talk:marik`
+
+Königspaar:
+
+- `royal:speak`
+- `royal:listen`
+- `royal:accuse`
+
+Rat:
+
+- `council:hof`
+- `council:gilde`
+- `council:gesandtschaft`
+- `council:balanced`
+
+Ende:
+
+- `continue:ending`
 
 ## NPCs
 
 ### Herzogin Alena von Falkenruh
 
-Choice-ID: `npc:duchess`
-
-Story-Flag-Wert bei erster Beobachtung: `duchess`
-
 Alena steht für Kontrolle und vorsichtige Nutzung der Höhle unter königlicher
-Aufsicht. Sie will verhindern, dass ein einzelnes Haus zu mächtig wird.
+Aufsicht. Ein Gespräch mit ihr unterstützt die Hofallianz.
 
 ### Graf Bastian von Eisenmark
 
-Choice-ID: `npc:count`
-
-Story-Flag-Wert bei erster Beobachtung: `count`
-
-Bastian steht für schnellen Gewinn, Arbeit und Ehrgeiz. Seine Versprechen
-wirken attraktiv, machen andere aber abhängig von seiner Macht.
+Bastian steht für schnellen Gewinn und sichtbaren Ehrgeiz. Ein Gespräch mit
+ihm unterstützt ebenfalls die Hofallianz, aber mit riskanterem Ton.
 
 ### Meisterin Runa Steinhand
 
-Choice-ID: `npc:guildmaster`
-
-Story-Flag-Wert bei erster Beobachtung: `guildmaster`
-
-Runa steht für Bergbau, Handwerk und Gildeninteressen. Sie denkt praktisch und
-warnt vor hastiger Ausbeutung.
+Runa steht für Fachwissen, Bergbau und Gildeninteressen. Ein Gespräch mit ihr
+unterstützt den Gildenpakt.
 
 ### Lord Caelion Silberblatt
 
-Choice-ID: `npc:envoy`
-
-Story-Flag-Wert bei erster Beobachtung: `envoy`
-
-Caelion sucht nach verborgener Angst, alten Abmachungen und diplomatischen
-Gefahren.
+Caelion beobachtet alte Abmachungen und diplomatische Gefahren. Ein Gespräch
+mit ihm unterstützt die elfische Gesandtschaft.
 
 ### Hofsekretär Marik Voss
 
-Choice-ID: `npc:secretary`
+Marik ist offiziell neutral und kennt alte Schriftstücke. Ein Gespräch mit ihm
+unterstützt den gemeinsamen Kronenpakt.
 
-Story-Flag-Wert bei erster Beobachtung: `secretary`
+### Königin Meridia
 
-Marik ist offiziell neutral. Er kennt vermutlich Schriftstücke, Ansprüche und
-alte Abmachungen, die für die Höhle wichtig sind.
+Meridia hört eine Stimme aus dem Saal an. Mit `royal:speak` kann der Spieler
+direkt mit ihr interagieren.
+
+### König Arwed
+
+Arwed verkündet am Ende, welche Allianz die Schürfrechte erhält.
+
+## Allianzen
+
+Interne Werte:
+
+- `hof`: königliche Hofallianz
+- `gilde`: Gildenpakt
+- `gesandtschaft`: elfische Gesandtschaft
+- `balanced`: gemeinsamer Kronenpakt
+
+Der Rat kann direkt eine Allianz unterstützen. Bei passenden Attributen wird
+die gewählte Allianz bestätigt:
+
+- `hof` profitiert von hoher Schlagfertigkeit.
+- `gilde` profitiert von hohem Wissen.
+- `gesandtschaft` profitiert von hohem Verständnis.
+- `balanced` profitiert ebenfalls von hohem Verständnis.
 
 ## Story-Flags
 
-Aktuell verwendet `Game` ein Dictionary `story_flags`.
+`Game` verwendet ein Dictionary `story_flags`.
 
 Gesetztes Flag:
 
 - `first_observed_npc`
 
-Dieses Flag speichert, welche Person der Spieler im Ballsaal zuerst beobachtet
-hat. Es wird im aktuellen Code noch nicht weiter ausgewertet.
+Dieses Flag speichert, welche Person der Spieler zuerst beobachtet hat. Es
+wird aktuell gespeichert, aber noch nicht für weitere Szenen ausgewertet.
 
 ## Spielende
 
-Nach der Ballsaal-Szene gibt es noch keine weitere spielbare Szene. Das Spiel
-setzt den Zustand auf `FINISHED` und zeigt eine einfache Endmeldung.
+Nach der Verkündung setzt Szene 2 den Zustand auf fertig. `Game` übernimmt die
+Endmeldung aus der Szene und setzt den Gesamtzustand auf `FINISHED`.
 
 Wichtige Message-ID:
 
-- `game-end`
+- `game-ballroom-ending`
